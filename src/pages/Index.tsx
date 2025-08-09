@@ -314,7 +314,7 @@ export default function Index() {
               <AccordionItem value="q2">
                 <AccordionTrigger>When do I get access?</AccordionTrigger>
                 <AccordionContent>
-                  Immediately after checkout. You’ll receive instant login details.
+                  You will get instant access! Immediately after your payment is successfully processed through Gumroad, you will be automatically redirected to a Google Drive link where you can download /watch all the courses.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="q3">
