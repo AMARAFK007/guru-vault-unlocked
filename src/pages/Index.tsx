@@ -120,6 +120,11 @@ export default function Index() {
                   <Badge variant="secondary">Luke Belmar</Badge>
                   <Badge variant="secondary">+ 200+ More</Badge>
                 </div>
+                <div className="flex justify-center pt-2">
+                  <Button asChild variant="cta" size="lg">
+                    <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Buy Now</a>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
