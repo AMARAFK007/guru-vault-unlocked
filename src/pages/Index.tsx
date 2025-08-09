@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import { Briefcase, LineChart, Brain, Rocket, Megaphone, Code, TrendingUp, DollarSign, ShieldCheck, CreditCard, BadgeCheck, Lock, PlayCircle, Download, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+const GUMROAD_URL = "https://gumroad.com/your-product";
 const categories = [{
   icon: Briefcase,
   label: "Business"
@@ -44,6 +46,17 @@ const testimonials = [{
   quote: "Downloaded the entire library in a day. This is a legit unfair advantage for $10."
 }];
 export default function Index() {
+  useEffect(() => {
+    document.title = "Unlock Every Online Guru Course — Here Just for $15";
+    const desc = "50TB+ of premium courses from top entrepreneurs, traders, and creators. Lifetime access for $15.";
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", desc);
+  }, []);
   return <div className="min-h-screen bg-background text-foreground">
       <a href="#buy" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4">
         Skip to action
@@ -61,7 +74,7 @@ export default function Index() {
             </Badge>
             <Badge variant="secondary" className="hidden md:inline-flex">One-time $15</Badge>
             <Button asChild variant="hero" size="sm">
-              <a href="#buy">Unlock All Guru Courses Now</a>
+              <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Unlock All Guru Courses Now</a>
             </Button>
           </div>
         </div>
@@ -75,10 +88,10 @@ export default function Index() {
             <div className="mx-auto max-w-3xl text-center animate-fade-in-up">
               <Badge variant="outline" className="mb-4 inline-flex gap-2">
                 <Lock className="h-4 w-4" aria-hidden="true" />
-                Early bird access — Only 100/week at $10
+                Early bird access — Only 100/week at $15
               </Badge>
 
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1]">Unlock Every ‘Online Guru’ Course Worth More than 1M$ —Just $15</h1>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1]">Unlock Every ‘Online Guru’ Course Worth More than 1M$ —Here Just for $15</h1>
               <p className="mt-4 text-lg md:text-xl text-muted-foreground">Get lifetime access to 50TB+ of premium knowledge. Courses from today’s top creators & money-makers included for a one-time $15.</p>
               <p className="mt-3 text-sm md:text-base text-muted-foreground">
                 Includes every major business, wealth, trading, and mindset course
@@ -86,8 +99,8 @@ export default function Index() {
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Button id="buy" variant="hero" size="xl" className="w-full sm:w-auto shadow-glow">
-                  Unlock All Guru Courses Now
+                <Button asChild id="buy" variant="hero" size="xl" className="w-full sm:w-auto shadow-glow">
+                  <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Unlock All Guru Courses Now</a>
                 </Button>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <ShieldCheck className="h-4 w-4 text-primary" aria-hidden="true" />
@@ -96,11 +109,17 @@ export default function Index() {
               </div>
 
               {/* Trust badges */}
-              <div className="mt-8 grid grid-cols-3 items-center justify-items-center gap-6 text-xs text-muted-foreground">
-                
-                
-                
-                {/* TODO: Replace icons above with official brand badges/logos */}
+              <div className="mt-8 space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center justify-center gap-2">
+                  <span role="img" aria-label="books">📚</span>
+                  <span>Includes every major business, wealth, trading, and mindset course in one bundle.</span>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+                  <Badge variant="secondary">Andrew Tate</Badge>
+                  <Badge variant="secondary">Iman Gadzhi</Badge>
+                  <Badge variant="secondary">Luke Belmar</Badge>
+                  <Badge variant="secondary">+ 200+ More</Badge>
+                </div>
               </div>
             </div>
           </div>
@@ -109,10 +128,9 @@ export default function Index() {
         {/* What’s Inside */}
         <section className="container py-12 md:py-16">
           <div className="mx-auto max-w-4xl text-center">
-            <h2 className="text-2xl md:text-3xl font-semibold">What’s Inside</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold">What’s Inside in the bundle?</h2>
             <p className="mt-2 text-muted-foreground">
-              A complete library covering the skills that build income, freedom, and
-              leverage.
+              What's inside in the bundle: 50TB+ of premium content from the world's top entrepreneurs, traders, and business minds. Everything you need to build wealth and success.
             </p>
           </div>
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -125,6 +143,33 @@ export default function Index() {
                   <span className="text-sm font-medium">{label}</span>
                 </CardContent>
               </Card>)}
+          </div>
+
+          <div className="mt-10">
+            <h3 className="text-xl font-semibold text-center">Featured Gurus Included</h3>
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { name: "Andrew Tate", topic: "Hustlers University" },
+                { name: "Iman Gadzhi", topic: "Digital Marketing" },
+                { name: "Luke Beimar", topic: "E-commerce" },
+                { name: "Jordan Welch", topic: "Dropshipping" },
+                { name: "Dan Lok", topic: "High Ticket Sales" },
+                { name: "Alex Hormazi", topic: "" }
+              ].map((g) => (
+                <Card key={g.name} className="transition hover:shadow-elegant">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <BadgeCheck className="h-5 w-5 text-primary" aria-hidden="true" />
+                      <div>
+                        <div className="font-medium">{g.name}</div>
+                        {g.topic && <div className="text-xs text-muted-foreground">{g.topic}</div>}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <p className="mt-3 text-center text-sm text-muted-foreground">...and many more</p>
           </div>
         </section>
 
@@ -157,8 +202,8 @@ export default function Index() {
                 <p className="mt-2 text-sm text-muted-foreground">
                   One-time, lifetime access
                 </p>
-                <Button variant="hero" size="lg" className="mt-4 w-full">
-                  Unlock Now
+                <Button asChild variant="hero" size="lg" className="mt-4 w-full">
+                  <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Buy Now</a>
                 </Button>
               </div>
             </CardContent>
@@ -177,7 +222,7 @@ export default function Index() {
             {[{
             icon: CreditCard,
             title: "Buy",
-            desc: "Pay $10 one-time via secure checkout."
+            desc: "Pay $15 one-time via secure checkout."
           }, {
             icon: PlayCircle,
             title: "Instant Login",
@@ -209,10 +254,10 @@ export default function Index() {
                 Early bird pricing
               </div>
               <p className="mt-1 font-semibold">
-                Only 100 bundles per week at the $10 price.
+                Only 100 bundles per week at the $15 price.
               </p>
             </div>
-            <Button variant="cta" size="lg">Get the $10 Bundle</Button>
+            <Button asChild variant="cta" size="lg"><a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Get the $15 Bundle</a></Button>
           </div>
         </section>
 
@@ -263,7 +308,7 @@ export default function Index() {
               <AccordionItem value="q1">
                 <AccordionTrigger>Is this a one-time payment?</AccordionTrigger>
                 <AccordionContent>
-                  Yes. You pay $10 once and get lifetime access.
+                  Yes. You pay $15 once and get lifetime access.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="q2">
@@ -309,8 +354,8 @@ export default function Index() {
       {/* Sticky mobile CTA */}
       <div className="fixed inset-x-0 bottom-0 sm:hidden border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container py-3">
-          <Button variant="hero" size="lg" className="w-full">
-            Unlock All Guru Courses Now
+          <Button asChild variant="hero" size="lg" className="w-full">
+            <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Purchase Now</a>
           </Button>
         </div>
       </div>
