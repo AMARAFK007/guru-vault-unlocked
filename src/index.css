@@ -8,7 +8,6 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Core palette */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -18,16 +17,8 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Brand accent */
-    --brand-h: 258;
-    --brand-s: 90%;
-    --brand-l: 60%;
-    --brand: 258 90% 60%;
-    --brand-foreground: 0 0% 100%;
-
-    /* Primary uses brand by default */
-    --primary: var(--brand);
-    --primary-foreground: var(--brand-foreground);
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -47,23 +38,21 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    /* Sidebar tokens */
     --sidebar-background: 0 0% 98%;
+
     --sidebar-foreground: 240 5.3% 26.1%;
+
     --sidebar-primary: 240 5.9% 10%;
+
     --sidebar-primary-foreground: 0 0% 98%;
+
     --sidebar-accent: 240 4.8% 95.9%;
+
     --sidebar-accent-foreground: 240 5.9% 10%;
+
     --sidebar-border: 220 13% 91%;
+
     --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Gradients & shadows */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.75));
-    --shadow-elegant: 0 10px 30px -10px hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.25);
-    --shadow-glow: 0 16px 40px -10px hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.45);
-
-    /* Motion */
-    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
@@ -76,12 +65,8 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    /* Brand */
-    --brand: 258 90% 62%;
-    --brand-foreground: 0 0% 100%;
-
-    --primary: var(--brand);
-    --primary-foreground: var(--brand-foreground);
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -98,7 +83,6 @@ All colors MUST be HSL.
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -109,7 +93,6 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
-
 
 @layer base {
   * {
