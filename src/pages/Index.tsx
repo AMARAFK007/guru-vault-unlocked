@@ -1,83 +1,51 @@
 import { Link } from "react-router-dom";
-import {
-  Briefcase,
-  LineChart,
-  Brain,
-  Rocket,
-  Megaphone,
-  Code,
-  TrendingUp,
-  DollarSign,
-  ShieldCheck,
-  CreditCard,
-  BadgeCheck,
-  Lock,
-  PlayCircle,
-  Download,
-  GraduationCap,
-} from "lucide-react";
+import { Briefcase, LineChart, Brain, Rocket, Megaphone, Code, TrendingUp, DollarSign, ShieldCheck, CreditCard, BadgeCheck, Lock, PlayCircle, Download, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
-const categories = [
-  { icon: Briefcase, label: "Business" },
-  { icon: LineChart, label: "Trading" },
-  { icon: Brain, label: "Self-Improvement" },
-  { icon: Rocket, label: "Side Hustles" },
-  { icon: Megaphone, label: "Marketing" },
-  { icon: Code, label: "Tech & AI" },
-  { icon: TrendingUp, label: "Investing" },
-  { icon: DollarSign, label: "Finance" },
-];
-
-const testimonials = [
-  {
-    name: "Alex P.",
-    role: "Agency Owner",
-    quote:
-      "Insane value. I’ve already implemented 3 frameworks and closed two new clients this week.",
-  },
-  {
-    name: "Sarah M.",
-    role: "Trader",
-    quote:
-      "Worth 1000x the price. The trading modules alone cover everything I’ve been hunting for.",
-  },
-  {
-    name: "James K.",
-    role: "Solo Founder",
-    quote:
-      "Downloaded the entire library in a day. This is a legit unfair advantage for $10.",
-  },
-];
-
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+const categories = [{
+  icon: Briefcase,
+  label: "Business"
+}, {
+  icon: LineChart,
+  label: "Trading"
+}, {
+  icon: Brain,
+  label: "Self-Improvement"
+}, {
+  icon: Rocket,
+  label: "Side Hustles"
+}, {
+  icon: Megaphone,
+  label: "Marketing"
+}, {
+  icon: Code,
+  label: "Tech & AI"
+}, {
+  icon: TrendingUp,
+  label: "Investing"
+}, {
+  icon: DollarSign,
+  label: "Finance"
+}];
+const testimonials = [{
+  name: "Alex P.",
+  role: "Agency Owner",
+  quote: "Insane value. I’ve already implemented 3 frameworks and closed two new clients this week."
+}, {
+  name: "Sarah M.",
+  role: "Trader",
+  quote: "Worth 1000x the price. The trading modules alone cover everything I’ve been hunting for."
+}, {
+  name: "James K.",
+  role: "Solo Founder",
+  quote: "Downloaded the entire library in a day. This is a legit unfair advantage for $10."
+}];
 export default function Index() {
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      <a
-        href="#buy"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
-      >
+  return <div className="min-h-screen bg-background text-foreground">
+      <a href="#buy" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4">
         Skip to action
       </a>
 
@@ -85,15 +53,13 @@ export default function Index() {
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-2 font-semibold">
             <ShieldCheck className="h-5 w-5 text-primary" aria-hidden="true" />
-            <span>Guru Vault Unlocked</span>
+            <span>50TB+ COURSES </span>
           </Link>
           <div className="hidden sm:flex items-center gap-3">
             <Badge variant="secondary" className="hidden md:inline-flex">
               50TB+ Premium Courses
             </Badge>
-            <Badge variant="secondary" className="hidden md:inline-flex">
-              One-time $10
-            </Badge>
+            <Badge variant="secondary" className="hidden md:inline-flex">One-time $15</Badge>
             <Button asChild variant="hero" size="sm">
               <a href="#buy">Unlock All Guru Courses Now</a>
             </Button>
@@ -112,13 +78,8 @@ export default function Index() {
                 Early bird access — Only 100/week at $10
               </Badge>
 
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1]">
-                Unlock Every ‘Online Guru’ Course—Just $10
-              </h1>
-              <p className="mt-4 text-lg md:text-xl text-muted-foreground">
-                Get lifetime access to 50TB+ of premium knowledge. Courses from
-                today’s top creators & money-makers included for a one-time $10.
-              </p>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1]">Unlock Every ‘Online Guru’ Course Worth More than 1M$ —Just $15</h1>
+              <p className="mt-4 text-lg md:text-xl text-muted-foreground">Get lifetime access to 50TB+ of premium knowledge. Courses from today’s top creators & money-makers included for a one-time $15.</p>
               <p className="mt-3 text-sm md:text-base text-muted-foreground">
                 Includes every major business, wealth, trading, and mindset course
                 in one bundle. Andrew Tate, Iman Gadzhi, Luke Belmar, and more.
@@ -136,18 +97,9 @@ export default function Index() {
 
               {/* Trust badges */}
               <div className="mt-8 grid grid-cols-3 items-center justify-items-center gap-6 text-xs text-muted-foreground">
-                <div className="inline-flex items-center gap-2">
-                  <CreditCard className="h-4 w-4" aria-hidden="true" />
-                  Stripe
-                </div>
-                <div className="inline-flex items-center gap-2">
-                  <CreditCard className="h-4 w-4" aria-hidden="true" />
-                  PayPal
-                </div>
-                <div className="inline-flex items-center gap-2">
-                  <BadgeCheck className="h-4 w-4" aria-hidden="true" />
-                  30-day refund
-                </div>
+                
+                
+                
                 {/* TODO: Replace icons above with official brand badges/logos */}
               </div>
             </div>
@@ -164,14 +116,15 @@ export default function Index() {
             </p>
           </div>
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {categories.map(({ icon: Icon, label }) => (
-              <Card key={label} className="transition hover:shadow-elegant">
+            {categories.map(({
+            icon: Icon,
+            label
+          }) => <Card key={label} className="transition hover:shadow-elegant">
                 <CardContent className="p-4 flex items-center gap-3">
                   <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
                   <span className="text-sm font-medium">{label}</span>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </section>
 
@@ -190,7 +143,7 @@ export default function Index() {
                   <DollarSign className="h-4 w-4" aria-hidden="true" />
                   Individual courses
                 </div>
-                <p className="mt-3 text-3xl font-bold tracking-tight">$100,000+</p>
+                <p className="mt-3 text-3xl font-bold tracking-tight">$1Million+</p>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Buying everything separately costs six figures+
                 </p>
@@ -200,7 +153,7 @@ export default function Index() {
                   <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                   Your price
                 </div>
-                <p className="mt-3 text-3xl font-bold tracking-tight">$10</p>
+                <p className="mt-3 text-3xl font-bold tracking-tight">$15</p>
                 <p className="mt-2 text-sm text-muted-foreground">
                   One-time, lifetime access
                 </p>
@@ -221,20 +174,29 @@ export default function Index() {
             </p>
           </div>
           <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[
-              { icon: CreditCard, title: "Buy", desc: "Pay $10 one-time via secure checkout." },
-              { icon: PlayCircle, title: "Instant Login", desc: "Access immediately after purchase." },
-              { icon: Download, title: "Download Everything", desc: "Grab the full library or what you need." },
-              { icon: GraduationCap, title: "Learn at Your Pace", desc: "Implement frameworks and grow." },
-            ].map((s) => (
-              <Card key={s.title}>
+            {[{
+            icon: CreditCard,
+            title: "Buy",
+            desc: "Pay $10 one-time via secure checkout."
+          }, {
+            icon: PlayCircle,
+            title: "Instant Login",
+            desc: "Access immediately after purchase."
+          }, {
+            icon: Download,
+            title: "Download Everything",
+            desc: "Grab the full library or what you need."
+          }, {
+            icon: GraduationCap,
+            title: "Learn at Your Pace",
+            desc: "Implement frameworks and grow."
+          }].map(s => <Card key={s.title}>
                 <CardContent className="p-6">
                   <s.icon className="h-6 w-6 text-primary" aria-hidden="true" />
                   <div className="mt-3 font-semibold">{s.title}</div>
                   <div className="mt-1 text-sm text-muted-foreground">{s.desc}</div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </section>
 
@@ -264,19 +226,15 @@ export default function Index() {
           </div>
 
           <div className="mt-8 relative">
-            <Carousel opts={{ loop: true }}>
+            <Carousel opts={{
+            loop: true
+          }}>
               <CarouselContent>
-                {testimonials.map((t, i) => (
-                  <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3">
+                {testimonials.map((t, i) => <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3">
                     <Card className="h-full">
                       <CardContent className="p-6 flex h-full flex-col">
                         <div className="flex items-center gap-3">
-                          <img
-                            src="/placeholder.svg"
-                            alt={`${t.name} profile photo`}
-                            loading="lazy"
-                            className="h-10 w-10 rounded-full border object-cover"
-                          />
+                          <img src="/placeholder.svg" alt={`${t.name} profile photo`} loading="lazy" className="h-10 w-10 rounded-full border object-cover" />
                           <div>
                             <div className="font-medium">{t.name}</div>
                             <div className="text-xs text-muted-foreground">{t.role}</div>
@@ -288,8 +246,7 @@ export default function Index() {
                         </div>
                       </CardContent>
                     </Card>
-                  </CarouselItem>
-                ))}
+                  </CarouselItem>)}
               </CarouselContent>
               <CarouselPrevious />
               <CarouselNext />
@@ -316,7 +273,7 @@ export default function Index() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="q3">
-                <AccordionTrigger>Can I get a refund?</AccordionTrigger>
+                
                 <AccordionContent>
                   Yes. There’s a 30-day refund policy if you’re not satisfied.
                 </AccordionContent>
@@ -357,27 +314,12 @@ export default function Index() {
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
 
 // Local inline icon to avoid extra imports
 function TimerIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      {...props}
-    >
-      <path
-        d="M12 8v5l3 2M9 2h6M19.03 7.39A9 9 0 1 1 4.97 7.39"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
+  return <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
+      <path d="M12 8v5l3 2M9 2h6M19.03 7.39A9 9 0 1 1 4.97 7.39" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>;
 }
