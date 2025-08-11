@@ -65,7 +65,7 @@ export default function Index() {
       <header className="sticky top-0 z-40 bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-2 font-semibold">
-            <ShieldCheck className="h-5 w-5 text-primary" aria-hidden="true" />
+            <ShieldCheck className="h-5 w-5 text-foreground" aria-hidden="true" />
             <span>50TB+ PREMIUM COURSES </span>
           </Link>
           <div className="hidden sm:flex items-center gap-3">
