@@ -99,7 +99,7 @@ export default function Index() {
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Button asChild id="buy" variant="hero" size="xl" className="w-full sm:w-auto shadow-glow">
+                <Button asChild id="buy" variant="hero" size="xl" className="w-full sm:w-auto shadow-glow animate-pulse ring-2 ring-primary/40 focus-visible:ring-4 focus-visible:ring-primary/60 focus-visible:ring-offset-2 transition-transform duration-200 will-change-transform hover:scale-[1.02]">
                   <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Unlock All Guru Courses Now</a>
                 </Button>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
