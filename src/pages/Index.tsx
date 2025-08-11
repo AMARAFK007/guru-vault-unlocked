@@ -66,7 +66,7 @@ export default function Index() {
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-2 font-semibold">
             <ShieldCheck className="h-5 w-5 text-primary" aria-hidden="true" />
-            <span>50TB+ COURSES </span>
+            <span>50TB+ PREMIUM COURSES </span>
           </Link>
           <div className="hidden sm:flex items-center gap-3">
             <Badge variant="secondary" className="hidden md:inline-flex">
@@ -153,15 +153,25 @@ export default function Index() {
           <div className="mt-10">
             <h3 className="text-xl font-semibold text-center">Featured Gurus Included</h3>
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { name: "Andrew Tate", topic: "Hustlers University" },
-                { name: "Iman Gadzhi", topic: "Digital Marketing" },
-                { name: "Luke Beimar", topic: "E-commerce" },
-                { name: "Jordan Welch", topic: "Dropshipping" },
-                { name: "Dan Lok", topic: "High Ticket Sales" },
-                { name: "Alex Hormazi", topic: "" }
-              ].map((g) => (
-                <Card key={g.name} className="transition hover:shadow-elegant">
+              {[{
+              name: "Andrew Tate",
+              topic: "Hustlers University"
+            }, {
+              name: "Iman Gadzhi",
+              topic: "Digital Marketing"
+            }, {
+              name: "Luke Beimar",
+              topic: "E-commerce"
+            }, {
+              name: "Jordan Welch",
+              topic: "Dropshipping"
+            }, {
+              name: "Dan Lok",
+              topic: "High Ticket Sales"
+            }, {
+              name: "Alex Hormazi",
+              topic: ""
+            }].map(g => <Card key={g.name} className="transition hover:shadow-elegant">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
                       <BadgeCheck className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -171,8 +181,7 @@ export default function Index() {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
             <p className="mt-3 text-center text-sm text-muted-foreground">...and many more</p>
           </div>
