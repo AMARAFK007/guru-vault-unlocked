@@ -43,7 +43,7 @@ const testimonials = [{
 }, {
   name: "James K.",
   role: "Solo Founder",
-  quote: "Downloaded the entire library in a day. This is a legit unfair advantage for $10."
+  quote: "Downloaded the entire library in a day. This is a legit unfair advantage for $15."
 }];
 export default function Index() {
   useEffect(() => {
