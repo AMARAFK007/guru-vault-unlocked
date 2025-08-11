@@ -73,7 +73,7 @@ export default function Index() {
               50TB+ Premium Courses
             </Badge>
             <Badge variant="secondary" className="hidden md:inline-flex">One-time $15</Badge>
-            <Button asChild variant="hero" size="sm">
+            <Button asChild variant="default" size="sm" className="bg-foreground text-background hover:bg-foreground/90">
               <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Unlock All Guru Courses Now</a>
             </Button>
           </div>
@@ -121,7 +121,7 @@ export default function Index() {
                   <Badge variant="secondary">+ 200+ More</Badge>
                 </div>
                 <div className="flex justify-center pt-2">
-                  <Button asChild variant="cta" size="lg">
+                  <Button asChild variant="default" size="lg" className="bg-foreground text-background hover:bg-foreground/90">
                     <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Buy Now</a>
                   </Button>
                 </div>
@@ -216,12 +216,23 @@ export default function Index() {
                 <p className="mt-2 text-sm text-muted-foreground">
                   One-time, lifetime access
                 </p>
-                <Button asChild variant="hero" size="lg" className="mt-4 w-full">
+                <Button asChild variant="default" size="lg" className="mt-4 w-full bg-foreground text-background hover:bg-foreground/90">
                   <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Buy Now</a>
                 </Button>
               </div>
             </CardContent>
           </Card>
+        </section>
+
+        {/* Why This Exists */}
+        <section className="container py-12 md:py-16">
+          <article className="mx-auto max-w-3xl text-center">
+            <h2 className="text-2xl md:text-3xl font-semibold">Why This Exists</h2>
+            <p className="mt-3 text-muted-foreground">
+              Tired of paying $300, $500, even $2,000 for one single course?
+              We’ve collected every major online guru’s business, wealth, and mindset course in one place — so you can learn anything you want, whenever you want, without going broke.
+            </p>
+          </article>
         </section>
 
         {/* How It Works */}
@@ -271,7 +282,7 @@ export default function Index() {
                 Only 100 bundles per week at the $15 price.
               </p>
             </div>
-            <Button asChild variant="cta" size="lg"><a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Get the $15 Bundle</a></Button>
+            <Button asChild variant="default" size="lg" className="bg-foreground text-background hover:bg-foreground/90"><a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Get the $15 Bundle</a></Button>
           </div>
         </section>
 
@@ -368,7 +379,7 @@ export default function Index() {
       {/* Sticky mobile CTA */}
       <div className="fixed inset-x-0 bottom-0 sm:hidden border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container py-3">
-          <Button asChild variant="hero" size="lg" className="w-full">
+          <Button asChild variant="default" size="lg" className="w-full bg-foreground text-background hover:bg-foreground/90">
             <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Purchase Now</a>
           </Button>
         </div>
