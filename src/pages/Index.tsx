@@ -362,7 +362,7 @@ export default function Index() {
       <footer className="border-t">
         <div className="container py-8 md:py-10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Guru Vault Unlocked • All rights reserved
+            © 2025 LearnforLess • All rights reserved
           </p>
           <div className="flex items-center gap-6 text-sm">
             <a href="mailto:support@example.com" className="underline underline-offset-4">
