@@ -44,6 +44,30 @@ const testimonials = [{
   name: "James K.",
   role: "Solo Founder",
   quote: "Downloaded the entire library in a day. This is a legit unfair advantage for $15."
+}, {
+  name: "Mike D.",
+  role: "E-commerce Owner",
+  quote: "Finally found everything in one place. The dropshipping courses alone saved me months of trial and error."
+}, {
+  name: "Lisa R.",
+  role: "Digital Marketer",
+  quote: "Best investment ever. The SMMA courses helped me scale from $5k to $50k monthly revenue."
+}, {
+  name: "Tony C.",
+  role: "Day Trader",
+  quote: "These trading strategies actually work. Made back the $15 in my first winning trade."
+}, {
+  name: "Emma W.",
+  role: "Content Creator",
+  quote: "The influencer marketing courses are gold. Went from 1k to 100k followers using these methods."
+}, {
+  name: "David L.",
+  role: "Affiliate Marketer",
+  quote: "Crazy how much value is packed in here. The affiliate courses alone are worth thousands."
+}, {
+  name: "Rachel K.",
+  role: "Real Estate Investor",
+  quote: "The real estate modules opened my eyes to new strategies. Already closed 2 deals using these methods."
 }];
 export default function Index() {
   useEffect(() => {
