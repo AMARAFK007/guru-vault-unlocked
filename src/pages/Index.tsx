@@ -1,6 +1,18 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { Briefcase, LineChart, Brain, Rocket, Megaphone, Code, TrendingUp, DollarSign, ShieldCheck, CreditCard, BadgeCheck, Lock, PlayCircle, Download, GraduationCap } from "lucide-react";
+
+// Profile images
+import profileAlex from "@/assets/profile-alex.jpg";
+import profileSarah from "@/assets/profile-sarah.jpg";
+import profileJames from "@/assets/profile-james.jpg";
+import profileMike from "@/assets/profile-mike.jpg";
+import profileLisa from "@/assets/profile-lisa.jpg";
+import profileTony from "@/assets/profile-tony.jpg";
+import profileEmma from "@/assets/profile-emma.jpg";
+import profileDavid from "@/assets/profile-david.jpg";
+import profileRachel from "@/assets/profile-rachel.jpg";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,39 +47,48 @@ const categories = [{
 const testimonials = [{
   name: "Alex P.",
   role: "Agency Owner",
-  quote: "Insane value. I’ve already implemented 3 frameworks and closed two new clients this week."
+  quote: "Insane value. I've already implemented 3 frameworks and closed two new clients this week.",
+  image: profileAlex
 }, {
   name: "Sarah M.",
   role: "Trader",
-  quote: "Worth 1000x the price. The trading modules alone cover everything I’ve been hunting for."
+  quote: "Worth 1000x the price. The trading modules alone cover everything I've been hunting for.",
+  image: profileSarah
 }, {
   name: "James K.",
   role: "Solo Founder",
-  quote: "Downloaded the entire library in a day. This is a legit unfair advantage for $15."
+  quote: "Downloaded the entire library in a day. This is a legit unfair advantage for $15.",
+  image: profileJames
 }, {
   name: "Mike D.",
   role: "E-commerce Owner",
-  quote: "Finally found everything in one place. The dropshipping courses alone saved me months of trial and error."
+  quote: "Finally found everything in one place. The dropshipping courses alone saved me months of trial and error.",
+  image: profileMike
 }, {
   name: "Lisa R.",
   role: "Digital Marketer",
-  quote: "Best investment ever. The SMMA courses helped me scale from $5k to $50k monthly revenue."
+  quote: "Best investment ever. The SMMA courses helped me scale from $5k to $50k monthly revenue.",
+  image: profileLisa
 }, {
   name: "Tony C.",
   role: "Day Trader",
-  quote: "These trading strategies actually work. Made back the $15 in my first winning trade."
+  quote: "These trading strategies actually work. Made back the $15 in my first winning trade.",
+  image: profileTony
 }, {
   name: "Emma W.",
   role: "Content Creator",
-  quote: "The influencer marketing courses are gold. Went from 1k to 100k followers using these methods."
+  quote: "The influencer marketing courses are gold. Went from 1k to 100k followers using these methods.",
+  image: profileEmma
 }, {
   name: "David L.",
   role: "Affiliate Marketer",
-  quote: "Crazy how much value is packed in here. The affiliate courses alone are worth thousands."
+  quote: "Crazy how much value is packed in here. The affiliate courses alone are worth thousands.",
+  image: profileDavid
 }, {
   name: "Rachel K.",
   role: "Real Estate Investor",
-  quote: "The real estate modules opened my eyes to new strategies. Already closed 2 deals using these methods."
+  quote: "The real estate modules opened my eyes to new strategies. Already closed 2 deals using these methods.",
+  image: profileRachel
 }];
 export default function Index() {
   useEffect(() => {
@@ -90,7 +111,7 @@ export default function Index() {
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-2 font-semibold">
             <ShieldCheck className="h-5 w-5 text-foreground" aria-hidden="true" />
-            <span>50TB+ PREMIUM COURSES </span>
+            <span>50TB+ PREMIUM COURSES </span>
           </Link>
           <div className="hidden sm:flex items-center gap-3">
             <Badge variant="secondary" className="hidden md:inline-flex">
@@ -115,8 +136,8 @@ export default function Index() {
                 Early bird access — Only 100/week at $15
               </Badge>
 
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1]">Unlock Every ‘Online Guru’ Course Worth More than 1M$ —Here Just for $15</h1>
-              <p className="mt-4 text-lg md:text-xl text-muted-foreground">Get lifetime access to 50TB+ of premium knowledge. Courses from today’s top creators & money-makers included for a one-time $15.</p>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1]">Unlock Every 'Online Guru' Course Worth More than 1M$ —Here Just for $15</h1>
+              <p className="mt-4 text-lg md:text-xl text-muted-foreground">Get lifetime access to 50TB+ of premium knowledge. Courses from today's top creators & money-makers included for a one-time $15.</p>
               <p className="mt-3 text-sm md:text-base text-muted-foreground">
                 Includes every major business, wealth, trading, and mindset course
                 in one bundle. Andrew Tate, Iman Gadzhi, Luke Belmar, and more.
@@ -154,10 +175,10 @@ export default function Index() {
           </div>
         </section>
 
-        {/* What’s Inside */}
+        {/* What's Inside */}
         <section className="container py-12 md:py-16">
           <div className="mx-auto max-w-4xl text-center">
-            <h2 className="text-2xl md:text-3xl font-semibold">What’s Inside in the bundle?</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold">What's Inside in the bundle?</h2>
             <p className="mt-2 text-muted-foreground">
               What's inside in the bundle: 50TB+ of premium content from the world's top entrepreneurs, traders, and business minds. Everything you need to build wealth and success.
             </p>
@@ -254,7 +275,7 @@ export default function Index() {
             <h2 className="text-2xl md:text-3xl font-semibold">Why This Exists</h2>
             <p className="mt-3 text-muted-foreground">
               Tired of paying $300, $500, even $2,000 for one single course?
-              We’ve collected every major online guru’s business, wealth, and mindset course in one place — so you can learn anything you want, whenever you want, without going broke.
+              We've collected every major online guru's business, wealth, and mindset course in one place — so you can learn anything you want, whenever you want, without going broke.
             </p>
           </article>
         </section>
@@ -328,13 +349,13 @@ export default function Index() {
                     <Card className="h-full">
                       <CardContent className="p-6 flex h-full flex-col">
                         <div className="flex items-center gap-3">
-                          <img src="/placeholder.svg" alt={`${t.name} profile photo`} loading="lazy" className="h-10 w-10 rounded-full border object-cover" />
+                          <img src={t.image} alt={`${t.name} profile photo`} loading="lazy" className="h-10 w-10 rounded-full border object-cover" />
                           <div>
                             <div className="font-medium">{t.name}</div>
                             <div className="text-xs text-muted-foreground">{t.role}</div>
                           </div>
                         </div>
-                        <p className="mt-4 text-sm text-foreground/90">“{t.quote}”</p>
+                        <p className="mt-4 text-sm text-foreground/90">"{t.quote}"</p>
                         <div className="mt-auto pt-4 text-xs text-muted-foreground">
                           Verified buyer
                         </div>
@@ -367,9 +388,9 @@ export default function Index() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="q3">
-                
+                <AccordionTrigger>Is there a refund policy?</AccordionTrigger>
                 <AccordionContent>
-                  Yes. There’s a 30-day refund policy if you’re not satisfied.
+                  Yes. There's a 30-day refund policy if you're not satisfied.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="q4">
