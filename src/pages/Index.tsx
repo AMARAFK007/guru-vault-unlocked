@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import { Briefcase, LineChart, Brain, Rocket, Megaphone, Code, TrendingUp, DollarSign, ShieldCheck, CreditCard, BadgeCheck, Lock, PlayCircle, Download, GraduationCap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Briefcase, LineChart, Brain, Rocket, Megaphone, Code, TrendingUp, DollarSign, ShieldCheck, CreditCard, BadgeCheck, Lock, PlayCircle, Download, GraduationCap, Mail, MessageSquare } from "lucide-react";
 
 // Profile images
 import profileAlex from "@/assets/profile-alex.jpg";
@@ -18,6 +18,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
 const categories = [{
   icon: Briefcase,
@@ -91,6 +94,25 @@ const testimonials = [{
   image: profileRachel
 }];
 export default function Index() {
+  const [email, setEmail] = useState("");
+  const [review, setReview] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email && review) {
+      // Here you would typically send the data to your backend
+      console.log("Review submitted:", { email, review });
+      setIsSubmitted(true);
+      setEmail("");
+      setReview("");
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 3000);
+    }
+  };
   useEffect(() => {
     document.title = "LearnforLess - Unlock Every Online Guru Course — Here Just for $15";
     const desc = "50TB+ of premium courses from top entrepreneurs, traders, and creators. Lifetime access for $15. Available at LearnforLess.";
@@ -367,6 +389,74 @@ export default function Index() {
               <CarouselNext />
             </Carousel>
             {/* TODO: Replace placeholder images and copy with real reviews or videos */}
+          </div>
+        </section>
+
+        {/* Add Your Review */}
+        <section className="container py-12 md:py-16">
+          <div className="mx-auto max-w-2xl">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl md:text-3xl font-semibold">Share Your Experience</h2>
+              <p className="mt-2 text-muted-foreground">
+                Help others by sharing your review of LearnforLess
+              </p>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5" />
+                  Add Your Review
+                </CardTitle>
+                <CardDescription>
+                  Your feedback helps us improve and helps others make informed decisions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isSubmitted ? (
+                  <div className="text-center py-8">
+                    <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-4 rounded-lg">
+                      <h3 className="font-semibold">Thank you for your review!</h3>
+                      <p className="text-sm mt-1">Your feedback has been submitted and will be reviewed soon.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleReviewSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Gmail Address</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="your.email@gmail.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="review">Your Review</Label>
+                      <Textarea
+                        id="review"
+                        placeholder="Share your experience with LearnforLess courses..."
+                        value={review}
+                        onChange={(e) => setReview(e.target.value)}
+                        rows={4}
+                        required
+                      />
+                    </div>
+                    
+                    <Button type="submit" className="w-full">
+                      Submit Review
+                    </Button>
+                  </form>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </section>
 
