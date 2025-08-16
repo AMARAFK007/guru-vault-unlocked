@@ -133,7 +133,7 @@ export default function Index() {
             <div className="mx-auto max-w-3xl text-center animate-fade-in-up">
               <Badge variant="outline" className="mb-4 inline-flex gap-2">
                 <Lock className="h-4 w-4" aria-hidden="true" />
-                Early bird access — Only 100/week at $15
+                LearnforLess Early bird access — Only 100/week at $15
               </Badge>
 
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1]">Unlock Every 'Online Guru' Course Worth More than 1M$ —Here Just for $15</h1>
@@ -157,7 +157,7 @@ export default function Index() {
               <div className="mt-8 space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-center justify-center gap-2">
                   <span role="img" aria-label="books">📚</span>
-                  <span>Includes every major business, wealth, trading, and mindset course in one bundle.</span>
+                  <span>LearnforLess includes every major business, wealth, trading, and mindset course in one bundle.</span>
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
                   <Badge variant="secondary">Andrew Tate</Badge>
