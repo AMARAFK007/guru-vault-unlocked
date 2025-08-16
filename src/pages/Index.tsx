@@ -500,7 +500,7 @@ export default function Index() {
             © 2025 LearnforLess • All rights reserved
           </p>
           <div className="flex items-center gap-6 text-sm">
-            <a href="mailto:support@example.com" className="underline underline-offset-4">
+            <a href="mailto:Aexoraenterprises@gmail.com" className="underline underline-offset-4">
               Support
             </a>
             <a href="#buy" className="underline underline-offset-4">
