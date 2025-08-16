@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-const GUMROAD_URL = "https://gumroad.com/your-product";
+const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
 const categories = [{
   icon: Briefcase,
   label: "Business"
@@ -92,8 +92,8 @@ const testimonials = [{
 }];
 export default function Index() {
   useEffect(() => {
-    document.title = "Unlock Every Online Guru Course — Here Just for $15";
-    const desc = "50TB+ of premium courses from top entrepreneurs, traders, and creators. Lifetime access for $15.";
+    document.title = "LearnforLess - Unlock Every Online Guru Course — Here Just for $15";
+    const desc = "50TB+ of premium courses from top entrepreneurs, traders, and creators. Lifetime access for $15. Available at LearnforLess.";
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement("meta");
@@ -111,7 +111,7 @@ export default function Index() {
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-2 font-semibold">
             <ShieldCheck className="h-5 w-5 text-foreground" aria-hidden="true" />
-            <span>50TB+ PREMIUM COURSES </span>
+            <span>LearnforLess | 50TB+ PREMIUM COURSES</span>
           </Link>
           <div className="hidden sm:flex items-center gap-3">
             <Badge variant="secondary" className="hidden md:inline-flex">
