@@ -88,8 +88,7 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <div className="fixed inset-0 bg-black/60 z-50" aria-hidden="true" />
-      <DialogContent className="sm:max-w-4xl max-h-[95vh] overflow-y-auto bg-white border-0 shadow-2xl relative z-50">
+      <DialogContent className="sm:max-w-4xl max-h-[95vh] overflow-y-auto bg-white border-0 shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
         <DialogHeader className="space-y-4 pb-6">
           <div className="text-center space-y-2">
             <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-1 text-sm font-semibold">

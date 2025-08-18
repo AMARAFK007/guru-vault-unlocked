@@ -100,6 +100,11 @@ export default function Index() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { isModalOpen, openPaymentModal, closePaymentModal } = usePayment();
 
+  const handlePaymentClick = () => {
+    console.log("Payment button clicked!");
+    openPaymentModal();
+  };
+
   const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email && review) {
@@ -146,7 +151,7 @@ export default function Index() {
               variant="default" 
               size="sm" 
               className="bg-foreground text-background hover:bg-foreground/90"
-              onClick={openPaymentModal}
+              onClick={handlePaymentClick}
             >
               Unlock All Guru Courses Now
             </Button>
@@ -178,7 +183,7 @@ export default function Index() {
                   variant="default" 
                   size="xl" 
                   className="w-full sm:w-auto shadow-glow bg-foreground text-background hover:bg-foreground/90"
-                  onClick={openPaymentModal}
+                  onClick={handlePaymentClick}
                 >
                   Unlock All Guru Courses Now
                 </Button>
@@ -205,7 +210,7 @@ export default function Index() {
                     variant="default" 
                     size="lg" 
                     className="bg-foreground text-background hover:bg-foreground/90"
-                    onClick={openPaymentModal}
+                    onClick={handlePaymentClick}
                   >
                     Buy Now
                   </Button>
@@ -305,7 +310,7 @@ export default function Index() {
                   variant="default" 
                   size="lg" 
                   className="mt-4 w-full bg-foreground text-background hover:bg-foreground/90"
-                  onClick={openPaymentModal}
+                  onClick={handlePaymentClick}
                 >
                   Buy Now
                 </Button>
@@ -376,7 +381,7 @@ export default function Index() {
               variant="default" 
               size="lg" 
               className="bg-foreground text-background hover:bg-foreground/90"
-              onClick={openPaymentModal}
+              onClick={handlePaymentClick}
             >
               Get the $15 Bundle
             </Button>
@@ -548,7 +553,7 @@ export default function Index() {
             variant="default" 
             size="lg" 
             className="w-full bg-foreground text-background hover:bg-foreground/90"
-            onClick={openPaymentModal}
+            onClick={handlePaymentClick}
           >
             Purchase Now
           </Button>
