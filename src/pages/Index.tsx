@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Briefcase, LineChart, Brain, Rocket, Megaphone, Code, TrendingUp, DollarSign, ShieldCheck, CreditCard, BadgeCheck, Lock, PlayCircle, Download, GraduationCap, Mail, MessageSquare } from "lucide-react";
+import PaymentModal from "@/components/PaymentModal";
+import { usePayment } from "@/hooks/usePayment";
 
 // Profile images
 import profileAlex from "@/assets/profile-alex.jpg";
@@ -21,7 +23,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
 const categories = [{
   icon: Briefcase,
   label: "Business"
@@ -97,6 +98,7 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [review, setReview] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { isModalOpen, openPaymentModal, closePaymentModal } = usePayment();
 
   const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,8 +142,13 @@ export default function Index() {
               50TB+ Premium Courses
             </Badge>
             <Badge variant="secondary" className="hidden md:inline-flex">One-time $15</Badge>
-            <Button asChild variant="default" size="sm" className="bg-foreground text-background hover:bg-foreground/90">
-              <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Unlock All Guru Courses Now</a>
+            <Button 
+              variant="default" 
+              size="sm" 
+              className="bg-foreground text-background hover:bg-foreground/90"
+              onClick={openPaymentModal}
+            >
+              Unlock All Guru Courses Now
             </Button>
           </div>
         </div>
@@ -166,8 +173,14 @@ export default function Index() {
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Button asChild id="buy" variant="default" size="xl" className="w-full sm:w-auto shadow-glow bg-foreground text-background hover:bg-foreground/90">
-                  <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Unlock All Guru Courses Now</a>
+                <Button 
+                  id="buy" 
+                  variant="default" 
+                  size="xl" 
+                  className="w-full sm:w-auto shadow-glow bg-foreground text-background hover:bg-foreground/90"
+                  onClick={openPaymentModal}
+                >
+                  Unlock All Guru Courses Now
                 </Button>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <ShieldCheck className="h-4 w-4 text-primary" aria-hidden="true" />
@@ -188,8 +201,13 @@ export default function Index() {
                   <Badge variant="secondary">+ 200+ More</Badge>
                 </div>
                 <div className="flex justify-center pt-2">
-                  <Button asChild variant="default" size="lg" className="bg-foreground text-background hover:bg-foreground/90">
-                    <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Buy Now</a>
+                  <Button 
+                    variant="default" 
+                    size="lg" 
+                    className="bg-foreground text-background hover:bg-foreground/90"
+                    onClick={openPaymentModal}
+                  >
+                    Buy Now
                   </Button>
                 </div>
               </div>
@@ -283,8 +301,13 @@ export default function Index() {
                 <p className="mt-2 text-sm text-muted-foreground">
                   One-time, lifetime access
                 </p>
-                <Button asChild variant="default" size="lg" className="mt-4 w-full bg-foreground text-background hover:bg-foreground/90">
-                  <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Buy Now</a>
+                <Button 
+                  variant="default" 
+                  size="lg" 
+                  className="mt-4 w-full bg-foreground text-background hover:bg-foreground/90"
+                  onClick={openPaymentModal}
+                >
+                  Buy Now
                 </Button>
               </div>
             </CardContent>
@@ -349,7 +372,14 @@ export default function Index() {
                 Only 100 bundles per week at the $15 price.
               </p>
             </div>
-            <Button asChild variant="default" size="lg" className="bg-foreground text-background hover:bg-foreground/90"><a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Get the $15 Bundle</a></Button>
+            <Button 
+              variant="default" 
+              size="lg" 
+              className="bg-foreground text-background hover:bg-foreground/90"
+              onClick={openPaymentModal}
+            >
+              Get the $15 Bundle
+            </Button>
           </div>
         </section>
 
@@ -514,11 +544,19 @@ export default function Index() {
       {/* Sticky mobile CTA */}
       <div className="fixed inset-x-0 bottom-0 sm:hidden border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container py-3">
-          <Button asChild variant="default" size="lg" className="w-full bg-foreground text-background hover:bg-foreground/90">
-            <a href={GUMROAD_URL} target="_blank" rel="noopener noreferrer">Purchase Now</a>
+          <Button 
+            variant="default" 
+            size="lg" 
+            className="w-full bg-foreground text-background hover:bg-foreground/90"
+            onClick={openPaymentModal}
+          >
+            Purchase Now
           </Button>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      <PaymentModal isOpen={isModalOpen} onClose={closePaymentModal} />
     </div>;
 }
 
