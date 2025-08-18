@@ -1,8 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Briefcase, LineChart, Brain, Rocket, Megaphone, Code, TrendingUp, DollarSign, ShieldCheck, CreditCard, BadgeCheck, Lock, PlayCircle, Download, GraduationCap, Mail, MessageSquare } from "lucide-react";
-import PaymentModal from "@/components/PaymentModal";
-import { usePayment } from "@/hooks/usePayment";
 
 // Profile images
 import profileAlex from "@/assets/profile-alex.jpg";
@@ -98,11 +96,11 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [review, setReview] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { isModalOpen, openPaymentModal, closePaymentModal } = usePayment();
+  const navigate = useNavigate();
 
   const handlePaymentClick = () => {
     console.log("Payment button clicked!");
-    openPaymentModal();
+    navigate('/checkout');
   };
 
   const handleReviewSubmit = (e: React.FormEvent) => {
@@ -560,8 +558,7 @@ export default function Index() {
         </div>
       </div>
 
-      {/* Payment Modal */}
-      <PaymentModal isOpen={isModalOpen} onClose={closePaymentModal} />
+
     </div>;
 }
 
