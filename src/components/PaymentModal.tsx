@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Bitcoin, ExternalLink, Shield, Clock, Gift, Zap, TrendingDown, Users, Star, DollarSign } from "lucide-react";
-import gumroadLogo from "@/assets/gumroad-logo.ico";
+import { CreditCard, Bitcoin, Lock, Shield, CheckCircle, Clock, Users, Star, TrendingDown, Gift } from "lucide-react";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -28,8 +27,8 @@ const CRYPTOMUS_URL = "https://cryptomus.com/"; // Replace with your actual Cryp
 const paymentMethods: PaymentMethod[] = [
   {
     id: 'gumroad',
-    name: 'Gumroad',
-    description: 'Pay with credit/debit cards, PayPal, and more',
+    name: 'Gumroad Checkout',
+    description: 'Credit/debit cards, PayPal, and more',
     icon: CreditCard,
     acceptedMethods: ['Visa', 'Mastercard', 'PayPal', 'Apple Pay', 'Google Pay'],
     processingTime: 'Instant',
@@ -38,17 +37,38 @@ const paymentMethods: PaymentMethod[] = [
   {
     id: 'cryptomus',
     name: 'Cryptomus',
-    description: 'Pay with cryptocurrency - Bitcoin, Ethereum, USDT & 100+ more',
+    description: 'Cryptocurrency payments - Save $2 + Get FREE Bonus',
     icon: Bitcoin,
-    acceptedMethods: ['Bitcoin', 'Ethereum', 'USDT', 'USDC', 'Litecoin', '+ 100 more'],
+    acceptedMethods: ['Bitcoin', 'Ethereum', 'USDT', 'USDC', 'BNB', '+ 100 more'],
     processingTime: 'Instant',
     url: CRYPTOMUS_URL,
-    badge: '🎁 BEST VALUE + FREE BONUS'
+    badge: 'RECOMMENDED'
   }
 ];
 
 export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
-  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<string>('cryptomus'); // Default to crypto
+  const [timeLeft, setTimeLeft] = useState<number>(3600); // 1 hour countdown
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 0) return 3600; // Reset to 1 hour
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isOpen]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handlePaymentSelect = (method: PaymentMethod) => {
     setSelectedMethod(method.id);
@@ -62,206 +82,244 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
     // Close modal after a short delay
     setTimeout(() => {
       onClose();
-      setSelectedMethod(null);
+      setSelectedMethod('cryptomus'); // Reset to crypto default
     }, 1000);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 bg-clip-text text-transparent">
-            Limited Time Offer
-          </DialogTitle>
-          <DialogDescription className="text-center text-lg font-medium">
-            <span className="text-emerald-600 font-bold">Save $2 + Get FREE Bonus with Crypto</span>
-            <br />
-            <span className="text-gray-600">Get lifetime access to 50TB+ premium courses</span>
-          </DialogDescription>
+      <div className="fixed inset-0 bg-black/60 z-50" aria-hidden="true" />
+      <DialogContent className="sm:max-w-4xl max-h-[95vh] overflow-y-auto bg-white border-0 shadow-2xl relative z-50">
+        <DialogHeader className="space-y-4 pb-6">
+          <div className="text-center space-y-2">
+            <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-1 text-sm font-semibold">
+              ⏰ LIMITED TIME OFFER - ENDS IN {formatTime(timeLeft)}
+            </Badge>
+            <DialogTitle className="text-3xl font-bold text-slate-800">
+              Unlock Lifetime Access
+            </DialogTitle>
+            <DialogDescription className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Choose your payment method below. 
+              <span className="font-semibold text-blue-600"> Save $2 and get a $47 bonus eBook when you pay with Cryptomus.</span>
+            </DialogDescription>
+          </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {paymentMethods.map((method) => {
-            const isCrypto = method.id === 'cryptomus';
-            const price = isCrypto ? '$14.99' : '$17.00';
-            const savings = isCrypto ? 'SAVE $2.01!' : '';
+        {/* Mobile: Cryptomus first, Desktop: Gumroad left, Cryptomus spans 2 cols */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+          {/* Cryptomus Card - Mobile First, Desktop Right */}
+          <Card 
+            className={`relative cursor-pointer transition-all duration-300 lg:col-span-2 lg:order-2 border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-xl shadow-lg ${
+              selectedMethod === 'cryptomus' ? 'ring-4 ring-blue-500/50 shadow-2xl border-blue-400' : 'hover:border-blue-300'
+            }`}
+            onClick={() => handlePaymentSelect(paymentMethods[1])}
+          >
+            {/* Recommended Badge */}
+            <Badge className="absolute -top-3 left-6 z-10 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-1 text-sm font-bold shadow-lg">
+              ✓ RECOMMENDED
+            </Badge>
             
-            return (
-              <Card 
-                key={method.id}
-                className={`relative cursor-pointer transition-all duration-300 ${
-                  isCrypto
-                    ? 'border-2 border-emerald-400 shadow-xl shadow-emerald-500/20 bg-gradient-to-br from-emerald-50/80 to-green-50/80 hover:shadow-emerald-500/30'
-                    : 'border border-gray-200 hover:border-gray-300 opacity-75 hover:opacity-85'
-                } ${
-                  selectedMethod === method.id 
-                    ? 'ring-4 ring-emerald-500/50 shadow-2xl' 
-                    : isCrypto ? 'hover:shadow-xl' : 'hover:shadow-lg'
-                }`}
-                onClick={() => handlePaymentSelect(method)}
-              >
-                {method.badge && (
-                  <Badge 
-                    variant="default" 
-                    className="absolute -top-3 left-4 z-10 bg-gradient-to-r from-emerald-500 to-green-500 text-white px-3 py-1 text-xs font-bold shadow-lg"
-                  >
-                    BEST VALUE + FREE BONUS
-                  </Badge>
-                )}
-                
-                {isCrypto && (
-                  <div className="absolute -top-2 right-4 z-10">
-                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold shadow-lg">
-                      PREMIUM
+            <CardContent className="p-6 lg:p-8">
+              {/* Header */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="relative flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg">
+                  <Bitcoin className="w-8 h-8 text-white" />
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-3 h-3 text-white" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl lg:text-2xl font-bold text-slate-800">Cryptomus Payment</h3>
+                  <p className="text-blue-600 font-semibold">Save $2.01 + Get FREE $47 Bonus</p>
+                </div>
+              </div>
+
+              {/* Pricing */}
+              <div className="text-center mb-6 p-4 bg-white rounded-xl border border-blue-200">
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <span className="text-3xl lg:text-4xl font-bold text-blue-600">$14.99</span>
+                  <div className="text-right">
+                    <span className="text-lg text-slate-400 line-through block">$17.00</span>
+                    <Badge className="bg-red-500 text-white text-xs font-bold">SAVE $2.01</Badge>
+                  </div>
+                </div>
+                <p className="text-sm text-slate-600">Best price available</p>
+              </div>
+
+              {/* FREE Bonus */}
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl mb-6 border border-green-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Gift className="w-5 h-5 text-green-600" />
+                  <span className="font-bold text-green-800">FREE BONUS INCLUDED</span>
+                </div>
+                <p className="text-sm text-green-700 font-medium">
+                  "Looksmaxxing Life-Changing" eBook (normally $47)
+                  <br />
+                  <span className="text-xs">+ Priority Support + VIP Access</span>
+                </p>
+              </div>
+
+              {/* Benefits */}
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span className="font-semibold text-slate-700">Instant processing</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span className="font-semibold text-slate-700">Lowest fees (0.5%)</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span className="font-semibold text-slate-700">256-bit SSL encrypted</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                  <span className="font-semibold text-slate-700">Priority support & VIP access</span>
+                </div>
+              </div>
+
+              {/* Accepted Cryptos */}
+              <div className="space-y-2 mb-6">
+                <div className="text-sm font-semibold text-slate-700">Accepted cryptocurrencies:</div>
+                <div className="flex flex-wrap gap-2">
+                  {['Bitcoin', 'Ethereum', 'USDT', 'USDC', 'BNB'].map((crypto) => (
+                    <Badge 
+                      key={crypto} 
+                      variant="secondary" 
+                      className={`text-xs ${
+                        crypto === 'USDT' 
+                          ? 'bg-green-100 text-green-800 border-green-300 font-bold' 
+                          : 'bg-blue-50 text-blue-700 border-blue-200'
+                      }`}
+                    >
+                      {crypto}
                     </Badge>
-                  </div>
+                  ))}
+                  <Badge variant="secondary" className="text-xs bg-blue-50 text-blue-700">
+                    +100 more
+                  </Badge>
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <Button 
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-lg py-6 shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                disabled={selectedMethod !== null && selectedMethod !== 'cryptomus'}
+              >
+                {selectedMethod === 'cryptomus' ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Processing...
+                  </span>
+                ) : (
+                  <>
+                    <Lock className="w-5 h-5 mr-2" />
+                    Get Crypto Deal Now
+                  </>
                 )}
-                
-                <CardContent className="p-6">
-                  {/* Price Section */}
-                  <div className="text-center mb-4">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <span className="text-3xl font-bold text-primary">{price}</span>
-                      {isCrypto && (
-                        <span className="text-lg text-gray-500 line-through">$17.00</span>
-                      )}
-                    </div>
-                    {savings && (
-                      <Badge className="bg-red-500 text-white font-bold text-xs">
-                        {savings}
-                      </Badge>
-                    )}
+              </Button>
+
+              {/* Social Proof */}
+              <div className="text-center mt-4 space-y-2">
+                <div className="flex items-center justify-center gap-2">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
                   </div>
+                  <span className="text-sm font-medium text-slate-700">4.9/5 rating</span>
+                </div>
+                <div className="flex items-center justify-center gap-1 text-xs text-blue-600">
+                  <Users className="w-3 h-3" />
+                  <span className="font-medium">47 people chose crypto in the last hour</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`relative flex items-center justify-center w-14 h-14 rounded-xl ${
-                      isCrypto 
-                        ? 'bg-gradient-to-br from-emerald-500 to-green-500 shadow-lg' 
-                        : 'bg-gradient-to-br from-gray-400 to-gray-500'
-                    }`}>
-                      {isCrypto ? (
-                        <div className="relative">
-                          <method.icon className="w-7 h-7 text-white" />
-                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                            <DollarSign className="w-2.5 h-2.5 text-white" />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="relative">
-                          <method.icon className="w-7 h-7 text-white opacity-80" />
-                          <img src={gumroadLogo} alt="Gumroad" className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full p-0.5" />
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <h3 className={`font-bold text-xl ${isCrypto ? 'text-emerald-700' : 'text-gray-600'}`}>{method.name}</h3>
-                      <p className={`text-sm ${isCrypto ? 'text-emerald-600' : 'text-muted-foreground'}`}>{method.description}</p>
-                    </div>
-                  </div>
+          {/* Gumroad Card - Desktop Left, Mobile Second */}
+          <Card 
+            className={`relative cursor-pointer transition-all duration-300 lg:order-1 border border-slate-200 hover:border-slate-300 bg-slate-50/50 hover:shadow-lg ${
+              selectedMethod === 'gumroad' ? 'ring-2 ring-slate-400' : ''
+            }`}
+            onClick={() => handlePaymentSelect(paymentMethods[0])}
+          >
+            <CardContent className="p-6">
+              <div className="text-center mb-4">
+                <h3 className="text-xl font-semibold text-slate-700 mb-2">Gumroad Checkout</h3>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-2xl font-bold text-slate-600">$17.00</span>
+                </div>
+                <p className="text-sm text-slate-500">Standard pricing</p>
+              </div>
 
-                  {/* Special Crypto Benefits */}
-                  {isCrypto && (
-                    <div className="bg-gradient-to-r from-emerald-100 to-green-100 p-4 rounded-lg mb-4 border border-emerald-200">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Gift className="w-5 h-5 text-emerald-600" />
-                        <span className="font-bold text-emerald-800">EXCLUSIVE CRYPTO BONUS</span>
-                      </div>
-                      <p className="text-sm text-emerald-700 font-medium">
-                        FREE "Looksmaxxing Life Changing" eBook ($47 Value) 
-                        <br />
-                        <span className="text-xs">+ Priority Support + VIP Access</span>
-                      </p>
-                    </div>
-                  )}
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <Clock className="w-4 h-4" />
+                  <span>Processing: Instant</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <Shield className="w-4 h-4" />
+                  <span>256-bit SSL Encrypted</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <Users className="w-4 h-4" />
+                  <span>Trusted by 10,000+ customers</span>
+                </div>
+              </div>
 
-                    <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Zap className={`w-4 h-4 ${isCrypto ? 'text-emerald-500' : 'text-muted-foreground'}`} />
-                      <span className={isCrypto ? 'text-emerald-600 font-bold' : 'text-muted-foreground'}>
-                        Processing: {method.processingTime}
-                      </span>
-                    </div>
+              <div className="space-y-2 mb-6">
+                <div className="text-xs font-medium text-slate-600 mb-2">Accepted payments:</div>
+                <div className="flex flex-wrap gap-1">
+                  {['Visa', 'Mastercard', 'PayPal', 'Apple Pay'].map((payment) => (
+                    <Badge key={payment} variant="secondary" className="text-xs bg-slate-100 text-slate-600">
+                      {payment}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
 
-                    <div className="flex items-center gap-2 text-sm">
-                      <Shield className="w-4 h-4 text-muted-foreground" />
-                      <span className={isCrypto ? 'text-emerald-600' : 'text-muted-foreground'}>256-bit SSL Encrypted</span>
-                    </div>
-
-                    {isCrypto && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <TrendingDown className="w-4 h-4 text-emerald-500" />
-                        <span className="text-emerald-600 font-medium">Lowest Fees (0.5%)</span>
-                      </div>
-                    )}
-
-                      <div className="space-y-2">
-                      <div className={`text-sm font-medium ${isCrypto ? 'text-emerald-700' : 'text-muted-foreground'}`}>Accepted:</div>
-                      <div className="flex flex-wrap gap-1">
-                        {method.acceptedMethods.slice(0, 3).map((payment) => (
-                          <Badge 
-                            key={payment} 
-                            variant="secondary" 
-                            className={`text-xs ${
-                              payment === 'USDT' ? 'bg-emerald-100 text-emerald-800 border-emerald-300 font-bold' : 
-                              isCrypto ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-gray-100 text-gray-600'
-                            }`}
-                          >
-                            {payment === 'USDT' ? 'USDT' : payment}
-                          </Badge>
-                        ))}
-                        {method.acceptedMethods.length > 3 && (
-                          <Badge variant="secondary" className={`text-xs ${isCrypto ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
-                            +{method.acceptedMethods.length - 3} more
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button 
-                    className={`w-full mt-6 group font-bold text-lg py-6 transition-all duration-300 ${
-                      isCrypto 
-                        ? 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 hover:from-emerald-600 hover:via-green-600 hover:to-emerald-700 shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/40' 
-                        : 'bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 opacity-60 hover:opacity-75'
-                    }`}
-                    disabled={selectedMethod !== null && selectedMethod !== method.id}
-                  >
-                    {selectedMethod === method.id ? (
-                      <span className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Opening...
-                      </span>
-                    ) : (
-                      <>
-                        {isCrypto ? 'GET CRYPTO DEAL NOW' : `Pay ${price} with ${method.name}`}
-                        <ExternalLink className={`w-4 h-4 ml-2 transition-transform ${isCrypto ? 'group-hover:translate-x-1' : ''}`} />
-                      </>
-                    )}
-                  </Button>
-
-                  {isCrypto && (
-                    <div className="text-center mt-2">
-                      <div className="flex items-center justify-center gap-1 text-xs text-emerald-600">
-                        <Users className="w-3 h-3" />
-                        <span className="font-medium">47 people chose crypto in the last hour</span>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
+              <Button 
+                className="w-full bg-slate-500 hover:bg-slate-600 text-white font-medium py-3"
+                disabled={selectedMethod !== null && selectedMethod !== 'gumroad'}
+              >
+                {selectedMethod === 'gumroad' ? 'Processing...' : 'Pay $17 with Gumroad'}
+              </Button>
+              
+              <p className="text-xs text-slate-400 text-center mt-2 italic">
+                No bonus eBook • $2 higher price
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Guarantee */}
-        <div className="mt-8 text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Shield className="w-4 h-4" />
-            <span className="font-medium">30-day money-back guarantee + Lifetime access</span>
+        {/* Footer Guarantee */}
+        <div className="mt-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
+          <div className="text-center space-y-3">
+            <div className="flex items-center justify-center gap-2">
+              <Shield className="w-5 h-5 text-blue-600" />
+              <span className="font-semibold text-slate-800">30-Day Money-Back Guarantee</span>
+            </div>
+            <p className="text-sm text-slate-600 max-w-2xl mx-auto">
+              Both payment methods are secure and encrypted. Choose Cryptomus to save $2 and get exclusive bonuses, 
+              or stick with Gumroad for standard pricing.
+            </p>
+            <div className="flex items-center justify-center gap-4 text-xs text-slate-500">
+              <span className="flex items-center gap-1">
+                <Lock className="w-3 h-3" />
+                SSL Encrypted
+              </span>
+              <span className="flex items-center gap-1">
+                <Shield className="w-3 h-3" />
+                Trusted by 10,000+
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle className="w-3 h-3" />
+                Instant Access
+              </span>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Both payment methods are secure. Choose crypto to save money and get exclusive bonuses.
-          </p>
         </div>
       </DialogContent>
     </Dialog>
