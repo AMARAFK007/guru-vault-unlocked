@@ -3,7 +3,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Bitcoin, ExternalLink, Shield, Clock, Gift, Zap, TrendingDown, Users, Star } from "lucide-react";
+import { CreditCard, Bitcoin, ExternalLink, Shield, Clock, Gift, Zap, TrendingDown, Users, Star, DollarSign } from "lucide-react";
+import gumroadLogo from "@/assets/gumroad-logo.ico";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -67,20 +68,20 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-clip-text text-transparent">
+          <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent">
             🔥 LIMITED TIME OFFER 🔥
           </DialogTitle>
           <DialogDescription className="text-center text-lg font-medium">
-            <span className="text-green-600 font-bold">💎 Save $2 + Get FREE Bonus with Crypto!</span>
+            <span className="text-purple-600 font-bold">💎 Save $2 + Get FREE Bonus with Crypto!</span>
             <br />
             <span className="text-muted-foreground">Get lifetime access to 50TB+ premium courses</span>
           </DialogDescription>
         </DialogHeader>
 
         {/* Urgency Banner */}
-        <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-center py-2 px-4 rounded-lg mb-4">
+        <div className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-center py-2 px-4 rounded-lg mb-4">
           <div className="flex items-center justify-center gap-2">
             <Zap className="w-4 h-4" />
             <span className="font-bold text-sm">⚡ Over 1,247 people bought this week!</span>
@@ -96,21 +97,21 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
             return (
               <Card 
                 key={method.id}
-                className={`relative cursor-pointer transition-all duration-300 hover:scale-105 border-2 ${
+                className={`relative cursor-pointer transition-all duration-500 ${
                   isCrypto
-                    ? 'border-green-400 shadow-2xl shadow-green-500/20 bg-gradient-to-br from-green-50/50 to-emerald-50/50'
-                    : 'border-gray-300 hover:border-gray-400'
+                    ? 'border-2 border-purple-400 shadow-2xl shadow-purple-500/30 bg-gradient-to-br from-purple-50/80 to-indigo-50/80 hover:scale-105 hover:shadow-purple-500/40 animate-pulse'
+                    : 'border border-gray-200 hover:border-gray-300 opacity-75 hover:opacity-85'
                 } ${
                   selectedMethod === method.id 
-                    ? 'ring-4 ring-primary/50 shadow-2xl' 
-                    : 'hover:shadow-xl'
+                    ? 'ring-4 ring-purple-500/50 shadow-3xl' 
+                    : isCrypto ? 'hover:shadow-2xl' : 'hover:shadow-lg'
                 }`}
                 onClick={() => handlePaymentSelect(method)}
               >
                 {method.badge && (
                   <Badge 
                     variant="default" 
-                    className="absolute -top-3 left-4 z-10 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 text-xs font-bold animate-pulse"
+                    className="absolute -top-3 left-4 z-10 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-3 py-1 text-xs font-bold animate-pulse shadow-lg"
                   >
                     {method.badge}
                   </Badge>
@@ -118,8 +119,8 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
                 
                 {isCrypto && (
                   <div className="absolute -top-2 right-4 z-10">
-                    <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold animate-bounce">
-                      🔥 HOT DEAL!
+                    <Badge className="bg-gradient-to-r from-gold-500 to-yellow-500 text-black font-bold animate-bounce shadow-lg">
+                      💎 PREMIUM!
                     </Badge>
                   </div>
                 )}
@@ -141,27 +142,39 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
                   </div>
 
                   <div className="flex items-center gap-3 mb-4">
-                    <div className={`flex items-center justify-center w-14 h-14 rounded-xl ${
+                    <div className={`relative flex items-center justify-center w-14 h-14 rounded-xl ${
                       isCrypto 
-                        ? 'bg-gradient-to-br from-green-500 to-emerald-500' 
-                        : 'bg-gradient-to-br from-blue-500 to-purple-500'
+                        ? 'bg-gradient-to-br from-purple-500 to-indigo-500 shadow-lg' 
+                        : 'bg-gradient-to-br from-gray-400 to-gray-500'
                     }`}>
-                      <method.icon className="w-7 h-7 text-white" />
+                      {isCrypto ? (
+                        <div className="relative">
+                          <method.icon className="w-7 h-7 text-white" />
+                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                            <DollarSign className="w-2.5 h-2.5 text-white" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative">
+                          <method.icon className="w-7 h-7 text-white opacity-80" />
+                          <img src={gumroadLogo} alt="Gumroad" className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full p-0.5" />
+                        </div>
+                      )}
                     </div>
                     <div>
-                      <h3 className="font-bold text-xl">{method.name}</h3>
-                      <p className="text-sm text-muted-foreground">{method.description}</p>
+                      <h3 className={`font-bold text-xl ${isCrypto ? 'text-purple-700' : 'text-gray-600'}`}>{method.name}</h3>
+                      <p className={`text-sm ${isCrypto ? 'text-purple-600' : 'text-muted-foreground'}`}>{method.description}</p>
                     </div>
                   </div>
 
                   {/* Special Crypto Benefits */}
                   {isCrypto && (
-                    <div className="bg-gradient-to-r from-green-100 to-emerald-100 p-4 rounded-lg mb-4 border border-green-200">
+                    <div className="bg-gradient-to-r from-purple-100 to-indigo-100 p-4 rounded-lg mb-4 border border-purple-200 animate-pulse">
                       <div className="flex items-center gap-2 mb-2">
-                        <Gift className="w-5 h-5 text-green-600" />
-                        <span className="font-bold text-green-800">🎁 EXCLUSIVE CRYPTO BONUS!</span>
+                        <Gift className="w-5 h-5 text-purple-600" />
+                        <span className="font-bold text-purple-800">🎁 EXCLUSIVE CRYPTO BONUS!</span>
                       </div>
-                      <p className="text-sm text-green-700 font-medium">
+                      <p className="text-sm text-purple-700 font-medium">
                         FREE "Looksmaxxing Life Changing" eBook ($47 Value) 
                         <br />
                         <span className="text-xs">+ Priority Support + VIP Access</span>
@@ -169,42 +182,43 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
                     </div>
                   )}
 
-                  <div className="space-y-3">
+                    <div className="space-y-3">
                     <div className="flex items-center gap-2 text-sm">
-                      <Zap className={`w-4 h-4 ${isCrypto ? 'text-green-500' : 'text-muted-foreground'}`} />
-                      <span className={isCrypto ? 'text-green-600 font-bold' : ''}>
+                      <Zap className={`w-4 h-4 ${isCrypto ? 'text-purple-500' : 'text-muted-foreground'}`} />
+                      <span className={isCrypto ? 'text-purple-600 font-bold' : 'text-muted-foreground'}>
                         Processing: {method.processingTime}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm">
                       <Shield className="w-4 h-4 text-muted-foreground" />
-                      <span>256-bit SSL Encrypted</span>
+                      <span className={isCrypto ? 'text-purple-600' : 'text-muted-foreground'}>256-bit SSL Encrypted</span>
                     </div>
 
                     {isCrypto && (
                       <div className="flex items-center gap-2 text-sm">
-                        <TrendingDown className="w-4 h-4 text-green-500" />
-                        <span className="text-green-600 font-medium">Lowest Fees (0.5%)</span>
+                        <TrendingDown className="w-4 h-4 text-purple-500" />
+                        <span className="text-purple-600 font-medium">Lowest Fees (0.5%)</span>
                       </div>
                     )}
 
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium">Accepted:</div>
+                      <div className="space-y-2">
+                      <div className={`text-sm font-medium ${isCrypto ? 'text-purple-700' : 'text-muted-foreground'}`}>Accepted:</div>
                       <div className="flex flex-wrap gap-1">
                         {method.acceptedMethods.slice(0, 3).map((payment) => (
                           <Badge 
                             key={payment} 
                             variant="secondary" 
                             className={`text-xs ${
-                              payment === 'USDT' ? 'bg-green-100 text-green-800 border-green-300' : ''
+                              payment === 'USDT' ? 'bg-purple-100 text-purple-800 border-purple-300 font-bold' : 
+                              isCrypto ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-gray-100 text-gray-600'
                             }`}
                           >
                             {payment === 'USDT' ? '💰 USDT' : payment}
                           </Badge>
                         ))}
                         {method.acceptedMethods.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge variant="secondary" className={`text-xs ${isCrypto ? 'bg-purple-50 text-purple-700' : 'bg-gray-100 text-gray-600'}`}>
                             +{method.acceptedMethods.length - 3} more
                           </Badge>
                         )}
@@ -213,10 +227,10 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
                   </div>
 
                   <Button 
-                    className={`w-full mt-6 group font-bold text-lg py-6 ${
+                    className={`w-full mt-6 group font-bold text-lg py-6 transition-all duration-300 ${
                       isCrypto 
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg shadow-green-500/25' 
-                        : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600'
+                        ? 'bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-600 hover:from-purple-600 hover:via-indigo-600 hover:to-purple-700 shadow-2xl shadow-purple-500/40 hover:shadow-purple-500/60 animate-pulse hover:animate-none hover:scale-105' 
+                        : 'bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 opacity-60 hover:opacity-75'
                     }`}
                     disabled={selectedMethod !== null && selectedMethod !== method.id}
                   >
@@ -227,17 +241,17 @@ export default function PaymentModal({ isOpen, onClose }: PaymentModalProps) {
                       </span>
                     ) : (
                       <>
-                        {isCrypto ? '🚀 GET CRYPTO DEAL NOW!' : `💳 Pay ${price} with ${method.name}`}
-                        <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        {isCrypto ? '🚀 GET CRYPTO DEAL NOW!' : `Pay ${price} with ${method.name}`}
+                        <ExternalLink className={`w-4 h-4 ml-2 transition-transform ${isCrypto ? 'group-hover:translate-x-1' : ''}`} />
                       </>
                     )}
                   </Button>
 
                   {isCrypto && (
                     <div className="text-center mt-2">
-                      <div className="flex items-center justify-center gap-1 text-xs text-green-600">
+                      <div className="flex items-center justify-center gap-1 text-xs text-purple-600 animate-pulse">
                         <Users className="w-3 h-3" />
-                        <span className="font-medium">47 people chose crypto in the last hour!</span>
+                        <span className="font-medium">🔥 47 people chose crypto in the last hour!</span>
                       </div>
                     </div>
                   )}
