@@ -1,0 +1,10 @@
+# Create a .env file in your project root with these variables:
+
+VITE_SUPABASE_URL=https://qmltjekfuciwtnnkvjfi.supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+# Instructions:
+# 1. Create a new file named .env in your project root
+# 2. Copy the above content into it
+# 3. Replace 'your_supabase_anon_key_here' with your actual anon key from Supabase dashboard
+# 4. Go to: Supabase Dashboard > Project Settings > API > Project API keys > anon/public key

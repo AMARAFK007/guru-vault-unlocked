@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Briefcase, LineChart, Brain, Rocket, Megaphone, Code, TrendingUp, DollarSign, ShieldCheck, CreditCard, BadgeCheck, Lock, PlayCircle, Download, GraduationCap, Mail, MessageSquare } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 // Profile images
 import profileAlex from "@/assets/profile-alex.jpg";
@@ -103,19 +104,39 @@ export default function Index() {
     navigate('/checkout');
   };
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email && review) {
-      // Here you would typically send the data to your backend
-      console.log("Review submitted:", { email, review });
-      setIsSubmitted(true);
-      setEmail("");
-      setReview("");
-      
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setIsSubmitted(false);
-      }, 3000);
+      try {
+        // Submit review to Supabase
+        const { data, error } = await supabase
+          .from('reviews')
+          .insert([
+            {
+              email: email,
+              content: review,
+              status: 'pending'
+            }
+          ]);
+
+        if (error) {
+          console.error('Error submitting review:', error);
+          // You might want to show an error message to the user
+        } else {
+          console.log("Review submitted successfully:", data);
+          setIsSubmitted(true);
+          setEmail("");
+          setReview("");
+          
+          // Reset success message after 3 seconds
+          setTimeout(() => {
+            setIsSubmitted(false);
+          }, 3000);
+        }
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        // Handle error - maybe show a toast notification
+      }
     }
   };
   useEffect(() => {

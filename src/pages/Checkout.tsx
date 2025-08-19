@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Lock, Shield, CreditCard, Bitcoin, ArrowLeft, CheckCircle, Star, Sparkles } from "lucide-react";
 import gumroadLogo from "@/assets/gumroad-logo.ico";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/hooks/use-auth";
 
 interface PaymentMethod {
   id: 'gumroad' | 'cryptomus';
@@ -42,6 +44,7 @@ export default function Checkout() {
   const [email, setEmail] = useState("");
   const [selectedMethod, setSelectedMethod] = useState<'gumroad' | 'cryptomus'>('cryptomus');
   const [isProcessing, setIsProcessing] = useState(false);
+  const { user, signInWithMagicLink } = useAuth();
 
   // Simple mobile-optimized effect
   useEffect(() => {
@@ -63,14 +66,44 @@ export default function Checkout() {
     }
   }, []);
 
-  const handlePaymentSelect = (method: PaymentMethod) => {
+  const handlePaymentSelect = async (method: PaymentMethod) => {
     setIsProcessing(true);
     
-    // Simulate loading for better UX
-    setTimeout(() => {
-      window.open(method.url, '_blank', 'noopener,noreferrer');
+    try {
+      // Create order record in Supabase
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert([
+          {
+            email: email,
+            payment_provider: method.id,
+            amount: method.id === 'gumroad' ? 14.99 : 12.99,
+            status: 'pending'
+          }
+        ])
+        .select()
+        .single();
+
+      if (orderError) {
+        console.error('Error creating order:', orderError);
+      } else {
+        console.log('Order created:', orderData);
+      }
+
+      // If user is not authenticated, send magic link
+      if (!user && email) {
+        await signInWithMagicLink(email);
+      }
+
+      // Simulate loading for better UX
+      setTimeout(() => {
+        window.open(method.url, '_blank', 'noopener,noreferrer');
+        setIsProcessing(false);
+      }, 1000);
+    } catch (error) {
+      console.error('Error processing payment:', error);
       setIsProcessing(false);
-    }, 1000);
+    }
   };
 
   return (
