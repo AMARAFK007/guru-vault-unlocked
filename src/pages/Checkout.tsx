@@ -167,6 +167,11 @@ export default function Checkout() {
                     className="h-14 bg-white/5 border-white/20 text-white placeholder:text-white/40 backdrop-blur-sm focus:bg-white/10 focus:border-blue-400/50 transition-all duration-300"
                     required
                   />
+                  {!email.trim() && (
+                    <p className="text-white/60 text-sm mt-1">
+                      Enter your email to continue with checkout
+                    </p>
+                  )}
                 </div>
 
                 {/* Payment Methods */}
@@ -267,11 +272,14 @@ export default function Checkout() {
                   type="button"
                   onClick={() => {
                     const selectedPaymentMethod = paymentMethods.find(m => m.id === selectedMethod);
-                    if (selectedPaymentMethod && email) {
+                    if (selectedPaymentMethod && email.trim()) {
                       handlePaymentSelect(selectedPaymentMethod);
+                    } else if (!email.trim()) {
+                      // Focus on email field if empty
+                      document.getElementById('email')?.focus();
                     }
                   }}
-                  disabled={!email || isProcessing}
+                  disabled={!email.trim() || isProcessing}
                   className="w-full h-16 text-lg font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 hover:from-blue-600 hover:via-purple-600 hover:to-emerald-600 text-white border-0 rounded-2xl shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 group relative overflow-hidden"
                 >
                   {/* Glowing effect */}
@@ -282,6 +290,11 @@ export default function Checkout() {
                       <>
                         <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         <span>Processing...</span>
+                      </>
+                    ) : !email.trim() ? (
+                      <>
+                        <Lock className="w-6 h-6" />
+                        <span>Enter Email to Continue</span>
                       </>
                     ) : (
                       <>
@@ -322,17 +335,7 @@ export default function Checkout() {
         </div>
       </main>
 
-      {/* Custom styles for glassmorphism effects */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-        
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-      `}</style>
+
     </div>
   );
 }
