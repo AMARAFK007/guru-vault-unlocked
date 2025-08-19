@@ -1,7 +1,9 @@
+const md5 = require('js-md5')
+
 // Cryptomus API integration
 const CRYPTOMUS_API_URL = 'https://api.cryptomus.com/v1'
 const CRYPTOMUS_MERCHANT_ID = '6260dd74-c31d-46d2-ab06-176ada669ccd'
-const CRYPTOMUS_PRIVATE_KEY = 'ZopVnjS33vr16DWnvCLKAXzVnZhNCOXkEt4yN7TgQCxAOuCdumzPdJBJVWIhe2VH6jNdr0Tk0dIKBvKBHzt0kMhtXiYNkbObLNyNgBcprV6cQmFREXlVIvFEo8TH8RPO'
+const CRYPTOMUS_API_KEY = 'ZopVnjS33vr16DWnvCLKAXzVnZhNCOXkEt4yN7TgQCxAOuCdumzPdJBJVWIhe2VH6jNdr0Tk0dIKBvKBHzt0kMhtXiYNkbObLNyNgBcprV6cQmFREXlVIvFEo8TH8RPO'
 
 export interface CryptomusInvoice {
   uuid: string
@@ -24,17 +26,29 @@ export interface CreateInvoiceRequest {
 
 export async function createCryptomusInvoice(data: CreateInvoiceRequest): Promise<CryptomusInvoice | null> {
   try {
+    console.log('🚀 Creating Cryptomus invoice with data:', data)
+    
+    // Prepare the request payload according to Cryptomus API
     const requestData = {
       amount: data.amount,
       currency: data.currency,
       order_id: data.order_id,
       url_return: data.url_return,
       url_callback: data.url_callback,
-      email: data.email,
-      additional_data: data.additional_data
+      is_payment_multiple: false,
+      lifetime: 7200, // 2 hours
+      to_currency: data.currency,
+      subtract: 100,
+      accuracy: 'default',
+      additional_data: data.additional_data || '',
+      currencies: [],
+      except_currencies: [],
+      description: 'LearnforLess Course Bundle Payment'
     }
 
-    const signature = await generateSignature(requestData)
+    // Generate signature
+    const signature = generateSignature(requestData)
+    console.log('🔐 Generated signature:', signature.substring(0, 10) + '...')
     
     const response = await fetch(`${CRYPTOMUS_API_URL}/payment`, {
       method: 'POST',
@@ -46,47 +60,62 @@ export async function createCryptomusInvoice(data: CreateInvoiceRequest): Promis
       body: JSON.stringify(requestData)
     })
 
+    console.log('📡 API Response status:', response.status)
+    const responseText = await response.text()
+    console.log('📡 API Response body:', responseText)
+
     if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`Cryptomus API error: ${response.statusText} - ${errorText}`)
+      throw new Error(`Cryptomus API HTTP error: ${response.status} - ${responseText}`)
     }
 
-    const result = await response.json()
+    const result = JSON.parse(responseText)
+    console.log('📦 Parsed API result:', result)
     
-    if (result.state === 0) {
-      return result.result
+    // Cryptomus returns state: 0 for success
+    if (result.state === 0 && result.result) {
+      console.log('✅ Invoice created successfully:', result.result.uuid)
+      return {
+        uuid: result.result.uuid,
+        order_id: result.result.order_id,
+        amount: result.result.amount,
+        currency: result.result.currency,
+        url: result.result.url,
+        status: result.result.status || 'pending'
+      }
     } else {
-      throw new Error(`Cryptomus API error: ${result.message || 'Unknown error'}`)
+      throw new Error(`Cryptomus API error: ${result.message || result.errors || 'Unknown error'}`)
     }
   } catch (error) {
-    console.error('Error creating Cryptomus invoice:', error)
+    console.error('❌ Error creating Cryptomus invoice:', error)
     return null
   }
 }
 
 // Generate signature for Cryptomus API according to their documentation
-async function generateSignature(data: any): Promise<string> {
+function generateSignature(data: any): string {
   try {
-    // Convert data to base64 first
+    // Step 1: Convert data to JSON and then base64
     const jsonString = JSON.stringify(data)
+    console.log('🔧 JSON data for signature:', jsonString)
+    
     const base64Data = btoa(jsonString)
+    console.log('🔧 Base64 data:', base64Data.substring(0, 50) + '...')
     
-    // Create signature string: base64(data) + private_key
-    const signString = base64Data + CRYPTOMUS_PRIVATE_KEY
+    // Step 2: Create signature string: base64(data) + api_key
+    const signString = base64Data + CRYPTOMUS_API_KEY
+    console.log('🔧 Sign string length:', signString.length)
     
-    // Generate MD5-like hash using available methods
-    const encoder = new TextEncoder()
-    const dataBuffer = encoder.encode(signString)
-    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer)
-    const hashArray = Array.from(new Uint8Array(hashBuffer))
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+    // Step 3: Generate MD5 hash (Cryptomus requires MD5)
+    const md5Hash = md5(signString)
+    console.log('🔧 Generated MD5 hash:', md5Hash)
     
-    // Return first 32 characters (MD5 length equivalent)
-    return hashHex.substring(0, 32)
+    return md5Hash
   } catch (error) {
-    console.error('Signature generation error:', error)
-    // Fallback simple hash
-    return btoa(JSON.stringify(data) + CRYPTOMUS_PRIVATE_KEY).substring(0, 32)
+    console.error('❌ Signature generation error:', error)
+    // Fallback: simple base64 encoding
+    const fallback = btoa(JSON.stringify(data) + CRYPTOMUS_API_KEY).replace(/[^a-zA-Z0-9]/g, '').substring(0, 32)
+    console.log('🔧 Using fallback signature:', fallback)
+    return fallback
   }
 }
 
