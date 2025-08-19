@@ -26,18 +26,23 @@ const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
 const CRYPTOMUS_MERCHANT_ID = "6260dd74-c31d-46d2-ab06-176ada669ccd";
 const CRYPTOMUS_BASE_URL = "https://pay.cryptomus.com/pay";
 
-// Generate Cryptomus payment URL
-const generateCryptomusURL = (email: string, amount: number) => {
-  // For now, we'll create a simple payment URL
-  // In production, you should create an invoice via Cryptomus API first
-  const orderId = `order-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+// Generate fallback Cryptomus payment URL (if API fails)
+const generateFallbackCryptomusURL = (email: string, amount: number, orderId: string) => {
+  // Fallback URL in case API invoice creation fails
+  const params = new URLSearchParams({
+    merchant: CRYPTOMUS_MERCHANT_ID,
+    amount: amount.toString(),
+    currency: 'USD',
+    order_id: orderId,
+    email: email,
+    description: 'LearnforLess Course Bundle'
+  });
   
-  // This is a simplified approach - replace with actual Cryptomus invoice creation
-  return `${CRYPTOMUS_BASE_URL}?merchant=${CRYPTOMUS_MERCHANT_ID}&amount=${amount}&currency=USD&order_id=${orderId}&email=${email}`;
+  return `${CRYPTOMUS_BASE_URL}?${params.toString()}`;
 };
 
-// Payment methods (URLs will be generated dynamically for Cryptomus)
-const getPaymentMethods = (email: string): PaymentMethod[] => [
+// Payment methods - URLs will be generated at payment time
+const paymentMethods: PaymentMethod[] = [
   {
     id: 'gumroad',
     name: 'Gumroad',
@@ -51,7 +56,7 @@ const getPaymentMethods = (email: string): PaymentMethod[] => [
     name: 'Cryptomus',
     description: 'Cryptocurrency payments - $12.99 + FREE Looksmaxxing eBook',
     icon: Bitcoin,
-    url: generateCryptomusURL(email, 12.99)
+    url: '' // Will be generated dynamically
   }
 ];
 
@@ -90,8 +95,6 @@ export default function Checkout() {
     setIsProcessing(true);
     
     try {
-      // Get the payment methods with dynamic URLs
-      const paymentMethods = getPaymentMethods(email);
       const method = paymentMethods.find(m => m.id === methodId);
       
       if (!method) {
@@ -99,6 +102,7 @@ export default function Checkout() {
       }
 
       // Create order record in Supabase
+      const orderId = `order-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert([
@@ -106,7 +110,8 @@ export default function Checkout() {
             email: email,
             payment_provider: method.id,
             amount: method.id === 'gumroad' ? 14.99 : 12.99,
-            status: 'pending'
+            status: 'pending',
+            metadata: { order_id: orderId }
           }
         ])
         .select()
@@ -114,60 +119,68 @@ export default function Checkout() {
 
       if (orderError) {
         console.error('Error creating order:', orderError);
-      } else {
-        console.log('Order created:', orderData);
+        throw new Error('Failed to create order');
       }
 
-      // If user is not authenticated, send magic link
-      if (!user && email) {
-        await signInWithMagicLink(email);
-      }
-
-      // For Cryptomus, create a proper invoice via API
+      console.log('Order created:', orderData);
       let paymentUrl = method.url;
       
       if (method.id === 'cryptomus') {
-        console.log('Creating Cryptomus invoice...');
+        console.log('Setting up Cryptomus payment...');
         
-        const cryptomusInvoice = await createCryptomusInvoice({
-          amount: '12.99',
-          currency: 'USD',
-          order_id: orderData?.id || `order-${Date.now()}`,
-          url_return: `${window.location.origin}/success`,
-          url_callback: `https://qmltjekfuciwtnnkvjfi.supabase.co/functions/v1/payment-webhook?provider=cryptomus`,
-          email: email,
-          additional_data: JSON.stringify({ 
-            platform: 'LearnforLess',
-            package: 'Complete Course Bundle' 
-          })
-        });
+        // Try to create invoice via API first
+        try {
+          const cryptomusInvoice = await createCryptomusInvoice({
+            amount: '12.99',
+            currency: 'USD',
+            order_id: orderId,
+            url_return: `${window.location.origin}/success?order_id=${orderData.id}`,
+            url_callback: `https://qmltjekfuciwtnnkvjfi.supabase.co/functions/v1/payment-webhook?provider=cryptomus`,
+            email: email,
+            additional_data: JSON.stringify({ 
+              platform: 'LearnforLess',
+              package: 'Complete Course Bundle',
+              order_db_id: orderData.id
+            })
+          });
 
-        if (cryptomusInvoice) {
-          paymentUrl = cryptomusInvoice.url;
-          console.log('Cryptomus invoice created:', cryptomusInvoice);
-          
-          // Update order with payment ID
-          if (orderData?.id) {
+          if (cryptomusInvoice && cryptomusInvoice.url) {
+            paymentUrl = cryptomusInvoice.url;
+            console.log('✅ Cryptomus invoice created:', cryptomusInvoice.uuid);
+            
+            // Update order with payment ID
             await supabase
               .from('orders')
               .update({ 
                 payment_id: cryptomusInvoice.uuid,
-                metadata: cryptomusInvoice 
+                metadata: { ...orderData.metadata, cryptomus_invoice: cryptomusInvoice }
               })
               .eq('id', orderData.id);
+          } else {
+            throw new Error('Invalid invoice response');
           }
-        } else {
-          console.error('Failed to create Cryptomus invoice, using fallback URL');
+        } catch (apiError) {
+          console.warn('Cryptomus API failed, using fallback URL:', apiError);
+          // Use fallback URL if API fails
+          paymentUrl = generateFallbackCryptomusURL(email, 12.99, orderId);
         }
       }
 
-      // Simulate loading for better UX
+      if (!paymentUrl) {
+        throw new Error('Could not generate payment URL');
+      }
+
+      console.log('Opening payment URL:', paymentUrl);
+      
+      // Open payment page
       setTimeout(() => {
         window.open(paymentUrl, '_blank', 'noopener,noreferrer');
         setIsProcessing(false);
-      }, 1000);
+      }, 500);
+      
     } catch (error) {
-      console.error('Error processing payment:', error);
+      console.error('❌ Payment processing error:', error);
+      alert('Failed to process payment. Please try again.');
       setIsProcessing(false);
     }
   };
@@ -281,7 +294,7 @@ export default function Checkout() {
                   </Label>
                   
                   <div className="grid gap-3">
-                    {getPaymentMethods(email).map((method) => (
+                    {paymentMethods.map((method) => (
                       <div
                         key={method.id}
                         className={`relative cursor-pointer transition-all duration-200 rounded-xl sm:rounded-2xl active:scale-[0.98] ${
