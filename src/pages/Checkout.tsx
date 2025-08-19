@@ -10,7 +10,6 @@ import gumroadLogo from "@/assets/gumroad-logo.ico";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/use-auth";
 import { createCryptomusInvoice } from "@/lib/cryptomus";
-import { testCryptomusAPI } from "@/lib/test-cryptomus";
 
 interface PaymentMethod {
   id: 'gumroad' | 'cryptomus';
@@ -67,11 +66,7 @@ export default function Checkout() {
   const [isProcessing, setIsProcessing] = useState(false);
   const { user, signInWithMagicLink } = useAuth();
 
-  // Test function for Cryptomus API
-  const handleTestCryptomus = async () => {
-    console.log('🧪 Testing Cryptomus API...')
-    await testCryptomusAPI()
-  }
+  // Removed test function to avoid import issues
 
   // Simple mobile-optimized effect
   useEffect(() => {
