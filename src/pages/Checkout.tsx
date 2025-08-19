@@ -20,9 +20,23 @@ interface PaymentMethod {
 }
 
 const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
-const CRYPTOMUS_URL = "https://pay.cryptomus.com/pay/YOUR_INVOICE_ID"; // Replace YOUR_INVOICE_ID with actual invoice ID from Cryptomus
 
-const paymentMethods: PaymentMethod[] = [
+// Cryptomus configuration - replace with your actual values
+const CRYPTOMUS_MERCHANT_ID = "your-merchant-id"; // Replace with your Cryptomus merchant ID
+const CRYPTOMUS_BASE_URL = "https://pay.cryptomus.com/pay";
+
+// Generate Cryptomus payment URL
+const generateCryptomusURL = (email: string, amount: number) => {
+  // For now, we'll create a simple payment URL
+  // In production, you should create an invoice via Cryptomus API first
+  const orderId = `order-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
+  // This is a simplified approach - replace with actual Cryptomus invoice creation
+  return `${CRYPTOMUS_BASE_URL}?merchant=${CRYPTOMUS_MERCHANT_ID}&amount=${amount}&currency=USD&order_id=${orderId}&email=${email}`;
+};
+
+// Payment methods (URLs will be generated dynamically for Cryptomus)
+const getPaymentMethods = (email: string): PaymentMethod[] => [
   {
     id: 'gumroad',
     name: 'Gumroad',
@@ -36,7 +50,7 @@ const paymentMethods: PaymentMethod[] = [
     name: 'Cryptomus',
     description: 'Cryptocurrency payments - $12.99 + FREE Looksmaxxing eBook',
     icon: Bitcoin,
-    url: CRYPTOMUS_URL
+    url: generateCryptomusURL(email, 12.99)
   }
 ];
 
@@ -66,10 +80,23 @@ export default function Checkout() {
     }
   }, []);
 
-  const handlePaymentSelect = async (method: PaymentMethod) => {
+  const handlePaymentSelect = async (methodId: 'gumroad' | 'cryptomus') => {
+    if (!email.trim()) {
+      document.getElementById('email')?.focus();
+      return;
+    }
+
     setIsProcessing(true);
     
     try {
+      // Get the payment methods with dynamic URLs
+      const paymentMethods = getPaymentMethods(email);
+      const method = paymentMethods.find(m => m.id === methodId);
+      
+      if (!method) {
+        throw new Error('Payment method not found');
+      }
+
       // Create order record in Supabase
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
@@ -95,9 +122,18 @@ export default function Checkout() {
         await signInWithMagicLink(email);
       }
 
+      // For Cryptomus, we need to create a proper invoice
+      let paymentUrl = method.url;
+      
+      if (method.id === 'cryptomus') {
+        console.log('Generated Cryptomus URL:', paymentUrl);
+        // In production, you should create an invoice via Cryptomus API here
+        // For now, we're using the generated URL
+      }
+
       // Simulate loading for better UX
       setTimeout(() => {
-        window.open(method.url, '_blank', 'noopener,noreferrer');
+        window.open(paymentUrl, '_blank', 'noopener,noreferrer');
         setIsProcessing(false);
       }, 1000);
     } catch (error) {
@@ -215,7 +251,7 @@ export default function Checkout() {
                   </Label>
                   
                   <div className="grid gap-3">
-                    {paymentMethods.map((method) => (
+                    {getPaymentMethods(email).map((method) => (
                       <div
                         key={method.id}
                         className={`relative cursor-pointer transition-all duration-200 rounded-xl sm:rounded-2xl active:scale-[0.98] ${
@@ -305,10 +341,9 @@ export default function Checkout() {
                 <Button
                   type="button"
                   onClick={() => {
-                    const selectedPaymentMethod = paymentMethods.find(m => m.id === selectedMethod);
-                    if (selectedPaymentMethod && email.trim()) {
-                      handlePaymentSelect(selectedPaymentMethod);
-                    } else if (!email.trim()) {
+                    if (email.trim()) {
+                      handlePaymentSelect(selectedMethod);
+                    } else {
                       // Focus on email field if empty
                       document.getElementById('email')?.focus();
                     }
