@@ -9,6 +9,7 @@ import { Lock, Shield, CreditCard, Bitcoin, ArrowLeft, CheckCircle, Star, Sparkl
 import gumroadLogo from "@/assets/gumroad-logo.ico";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/use-auth";
+import { createCryptomusInvoice } from "@/lib/cryptomus";
 
 interface PaymentMethod {
   id: 'gumroad' | 'cryptomus';
@@ -21,8 +22,8 @@ interface PaymentMethod {
 
 const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
 
-// Cryptomus configuration - replace with your actual values
-const CRYPTOMUS_MERCHANT_ID = "your-merchant-id"; // Replace with your Cryptomus merchant ID
+// Cryptomus configuration
+const CRYPTOMUS_MERCHANT_ID = "6260dd74-c31d-46d2-ab06-176ada669ccd";
 const CRYPTOMUS_BASE_URL = "https://pay.cryptomus.com/pay";
 
 // Generate Cryptomus payment URL
@@ -122,13 +123,42 @@ export default function Checkout() {
         await signInWithMagicLink(email);
       }
 
-      // For Cryptomus, we need to create a proper invoice
+      // For Cryptomus, create a proper invoice via API
       let paymentUrl = method.url;
       
       if (method.id === 'cryptomus') {
-        console.log('Generated Cryptomus URL:', paymentUrl);
-        // In production, you should create an invoice via Cryptomus API here
-        // For now, we're using the generated URL
+        console.log('Creating Cryptomus invoice...');
+        
+        const cryptomusInvoice = await createCryptomusInvoice({
+          amount: '12.99',
+          currency: 'USD',
+          order_id: orderData?.id || `order-${Date.now()}`,
+          url_return: `${window.location.origin}/success`,
+          url_callback: `https://qmltjekfuciwtnnkvjfi.supabase.co/functions/v1/payment-webhook?provider=cryptomus`,
+          email: email,
+          additional_data: JSON.stringify({ 
+            platform: 'LearnforLess',
+            package: 'Complete Course Bundle' 
+          })
+        });
+
+        if (cryptomusInvoice) {
+          paymentUrl = cryptomusInvoice.url;
+          console.log('Cryptomus invoice created:', cryptomusInvoice);
+          
+          // Update order with payment ID
+          if (orderData?.id) {
+            await supabase
+              .from('orders')
+              .update({ 
+                payment_id: cryptomusInvoice.uuid,
+                metadata: cryptomusInvoice 
+              })
+              .eq('id', orderData.id);
+          }
+        } else {
+          console.error('Failed to create Cryptomus invoice, using fallback URL');
+        }
       }
 
       // Simulate loading for better UX

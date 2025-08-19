@@ -1,0 +1,5 @@
+[33m48e2406[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m feat: Complete Supabase backend integration
+[33mdc3b000[m Add Supabase integration for order and review handling
+[33m3228ef6[m Optimize for mobile
+[33mc6c2ad1[m Enhance Checkout component with email validation and user prompts
+[33m911ba91[m Update Checkout component with payment method enhancements

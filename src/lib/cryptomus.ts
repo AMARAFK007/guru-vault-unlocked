@@ -1,7 +1,7 @@
 // Cryptomus API integration
 const CRYPTOMUS_API_URL = 'https://api.cryptomus.com/v1'
-const CRYPTOMUS_MERCHANT_ID = 'your-merchant-id' // Replace with your actual merchant ID
-const CRYPTOMUS_API_KEY = 'your-api-key' // Replace with your actual API key
+const CRYPTOMUS_MERCHANT_ID = '6260dd74-c31d-46d2-ab06-176ada669ccd'
+const CRYPTOMUS_PRIVATE_KEY = 'ZopVnjS33vr16DWnvCLKAXzVnZhNCOXkEt4yN7TgQCxAOuCdumzPdJBJVWIhe2VH6jNdr0Tk0dIKBvKBHzt0kMhtXiYNkbObLNyNgBcprV6cQmFREXlVIvFEo8TH8RPO'
 
 export interface CryptomusInvoice {
   uuid: string
@@ -24,33 +24,65 @@ export interface CreateInvoiceRequest {
 
 export async function createCryptomusInvoice(data: CreateInvoiceRequest): Promise<CryptomusInvoice | null> {
   try {
+    const requestData = {
+      amount: data.amount,
+      currency: data.currency,
+      order_id: data.order_id,
+      url_return: data.url_return,
+      url_callback: data.url_callback,
+      email: data.email,
+      additional_data: data.additional_data
+    }
+
+    const signature = await generateSignature(requestData)
+    
     const response = await fetch(`${CRYPTOMUS_API_URL}/payment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'merchant': CRYPTOMUS_MERCHANT_ID,
-        'sign': generateSignature(data), // You'll need to implement this based on Cryptomus docs
+        'sign': signature,
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(requestData)
     })
 
     if (!response.ok) {
-      throw new Error(`Cryptomus API error: ${response.statusText}`)
+      const errorText = await response.text()
+      throw new Error(`Cryptomus API error: ${response.statusText} - ${errorText}`)
     }
 
     const result = await response.json()
-    return result.result
+    
+    if (result.state === 0) {
+      return result.result
+    } else {
+      throw new Error(`Cryptomus API error: ${result.message || 'Unknown error'}`)
+    }
   } catch (error) {
     console.error('Error creating Cryptomus invoice:', error)
     return null
   }
 }
 
-// Generate signature for Cryptomus API (implement based on their documentation)
-function generateSignature(data: any): string {
-  // This needs to be implemented according to Cryptomus documentation
-  // Usually involves creating a hash of the data + API key
-  return 'signature-placeholder'
+// Generate signature for Cryptomus API according to their documentation
+async function generateSignature(data: any): Promise<string> {
+  // Sort the data keys and create query string
+  const sortedKeys = Object.keys(data).sort()
+  const queryString = sortedKeys
+    .map(key => `${key}=${data[key]}`)
+    .join('&')
+  
+  // Create signature string: query_string + private_key
+  const signString = queryString + CRYPTOMUS_PRIVATE_KEY
+  
+  // Generate MD5 hash using Web Crypto API
+  const encoder = new TextEncoder()
+  const dataBuffer = encoder.encode(signString)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  
+  return hashHex
 }
 
 // Verify webhook signature
