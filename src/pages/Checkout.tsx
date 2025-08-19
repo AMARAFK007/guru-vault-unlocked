@@ -18,13 +18,13 @@ interface PaymentMethod {
 }
 
 const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
-const CRYPTOMUS_URL = "https://cryptomus.com/"; // Replace with your actual Cryptomus payment link
+const CRYPTOMUS_URL = "https://pay.cryptomus.com/pay/YOUR_INVOICE_ID"; // Replace YOUR_INVOICE_ID with actual invoice ID from Cryptomus
 
 const paymentMethods: PaymentMethod[] = [
   {
     id: 'gumroad',
     name: 'Gumroad',
-    description: 'Credit/debit cards, PayPal, and more',
+    description: 'Credit/debit cards, PayPal, and more - $14.99',
     icon: CreditCard,
     url: GUMROAD_URL,
     logo: gumroadLogo
@@ -32,7 +32,7 @@ const paymentMethods: PaymentMethod[] = [
   {
     id: 'cryptomus',
     name: 'Cryptomus',
-    description: 'Cryptocurrency payments',
+    description: 'Cryptocurrency payments - $12.99 + FREE Looksmaxxing eBook',
     icon: Bitcoin,
     url: CRYPTOMUS_URL
   }
@@ -40,7 +40,7 @@ const paymentMethods: PaymentMethod[] = [
 
 export default function Checkout() {
   const [email, setEmail] = useState("");
-  const [selectedMethod, setSelectedMethod] = useState<'gumroad' | 'cryptomus'>('gumroad');
+  const [selectedMethod, setSelectedMethod] = useState<'gumroad' | 'cryptomus'>('cryptomus');
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Animated gradient background
@@ -209,12 +209,40 @@ export default function Checkout() {
                             
                             {/* Method details */}
                             <div className="flex-1">
-                              <h3 className="text-white font-semibold text-lg">
-                                {method.name}
-                              </h3>
-                              <p className="text-white/60 text-sm">
-                                {method.description}
-                              </p>
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-white font-semibold text-lg">
+                                  {method.name}
+                                </h3>
+                                {method.id === 'cryptomus' && (
+                                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs">
+                                    BEST DEAL
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-white/60 text-sm">
+                                  {method.id === 'gumroad' ? 'Credit/debit cards, PayPal, and more' : 'Cryptocurrency payments'}
+                                </p>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-white font-semibold">
+                                    {method.id === 'gumroad' ? '$14.99' : '$12.99'}
+                                  </span>
+                                  {method.id === 'gumroad' && (
+                                    <span className="text-white/40 text-sm">Standard price</span>
+                                  )}
+                                  {method.id === 'cryptomus' && (
+                                    <span className="text-emerald-400 text-sm font-medium">Save $2.00</span>
+                                  )}
+                                </div>
+                                {method.id === 'cryptomus' && (
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <Sparkles className="w-4 h-4 text-yellow-400" />
+                                    <span className="text-yellow-400 text-sm font-medium">
+                                      FREE Looksmaxxing Life-Changing eBook (Worth $47)
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                             
                             {/* Selection indicator */}
@@ -258,7 +286,7 @@ export default function Checkout() {
                     ) : (
                       <>
                         <Lock className="w-6 h-6" />
-                        <span>Complete Secure Purchase - $15</span>
+                        <span>Buy Now - {selectedMethod === 'gumroad' ? '$14.99' : '$12.99'}</span>
                       </>
                     )}
                   </div>
