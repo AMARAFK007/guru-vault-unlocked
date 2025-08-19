@@ -160,54 +160,53 @@ export default function Index() {
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden">
-          <div className="absolute inset-0 -z-10 bg-gradient-primary opacity-20" />
-          <div className="container py-16 md:py-24">
-            <div className="mx-auto max-w-3xl text-center animate-fade-in-up">
-              <Badge variant="outline" className="mb-4 inline-flex gap-2">
-                <Lock className="h-4 w-4" aria-hidden="true" />
-                LearnforLess Early bird access — Only 100/week at $15
+          <div className="absolute inset-0 -z-10 bg-gradient-primary opacity-15" />
+          <div className="container px-4 py-12 sm:py-16 md:py-20">
+            <div className="mx-auto max-w-4xl text-center">
+              <Badge variant="outline" className="mb-6 inline-flex gap-2 text-xs sm:text-sm px-3 py-2">
+                <Lock className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
+                <span className="font-medium">Early bird access — Only 100/week at $15</span>
               </Badge>
 
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1]">Unlock Every 'Online Guru' Course Worth More than 1M$ —Here Just for $15</h1>
-              <p className="mt-4 text-lg md:text-xl text-muted-foreground">Get lifetime access to 50TB+ of premium knowledge. Courses from today's top creators & money-makers included for a one-time $15.</p>
-              <p className="mt-3 text-sm md:text-base text-muted-foreground">
-                Includes every major business, wealth, trading, and mindset course
-                in one bundle. Andrew Tate, Iman Gadzhi, Luke Belmar, and more.
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
+                Unlock Every 'Online Guru' Course Worth More than 1M$ —Here Just for $15
+              </h1>
+              <p className="mt-4 text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed px-4">
+                Get lifetime access to 50TB+ of premium knowledge. Courses from today's top creators & money-makers included for a one-time $15.
+              </p>
+              <p className="mt-4 text-sm sm:text-base text-muted-foreground px-4">
+                Includes every major business, wealth, trading, and mindset course in one bundle. Andrew Tate, Iman Gadzhi, Luke Belmar, and more.
               </p>
 
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <div className="mt-8 flex flex-col items-center justify-center gap-4">
                 <Button 
                   id="buy" 
                   variant="default" 
-                  size="xl" 
-                  className="w-full sm:w-auto shadow-glow bg-foreground text-background hover:bg-foreground/90"
+                  size="lg"
+                  className="w-full max-w-sm h-14 text-lg font-semibold shadow-glow bg-foreground text-background hover:bg-foreground/90 transition-all duration-200 active:scale-95"
                   onClick={handlePaymentClick}
                 >
                   Unlock All Guru Courses Now
                 </Button>
-                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                   <ShieldCheck className="h-4 w-4 text-primary" aria-hidden="true" />
-                  Secure checkout • Instant access
+                  <span>Secure checkout • Instant access</span>
                 </div>
               </div>
 
               {/* Trust badges */}
-              <div className="mt-8 space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-center justify-center gap-2">
-                  <span role="img" aria-label="books">📚</span>
-                  <span>LearnforLess includes every major business, wealth, trading, and mindset course in one bundle.</span>
-                </div>
+              <div className="mt-8 space-y-4 text-sm text-muted-foreground px-4">
                 <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
-                  <Badge variant="secondary">Andrew Tate</Badge>
-                  <Badge variant="secondary">Iman Gadzhi</Badge>
-                  <Badge variant="secondary">Luke Belmar</Badge>
-                  <Badge variant="secondary">+ 200+ More</Badge>
+                  <Badge variant="secondary" className="text-xs">Andrew Tate</Badge>
+                  <Badge variant="secondary" className="text-xs">Iman Gadzhi</Badge>
+                  <Badge variant="secondary" className="text-xs">Luke Belmar</Badge>
+                  <Badge variant="secondary" className="text-xs">+ 200+ More</Badge>
                 </div>
                 <div className="flex justify-center pt-2">
                   <Button 
                     variant="default" 
                     size="lg" 
-                    className="bg-foreground text-background hover:bg-foreground/90"
+                    className="w-full max-w-xs h-12 bg-foreground text-background hover:bg-foreground/90 transition-all duration-200 active:scale-95"
                     onClick={handlePaymentClick}
                   >
                     Buy Now
@@ -219,21 +218,21 @@ export default function Index() {
         </section>
 
         {/* What's Inside */}
-        <section className="container py-12 md:py-16">
+        <section className="container px-4 py-12 md:py-16">
           <div className="mx-auto max-w-4xl text-center">
-            <h2 className="text-2xl md:text-3xl font-semibold">What's Inside in the bundle?</h2>
-            <p className="mt-2 text-muted-foreground">
-              What's inside in the bundle: 50TB+ of premium content from the world's top entrepreneurs, traders, and business minds. Everything you need to build wealth and success.
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4">What's Inside the Bundle?</h2>
+            <p className="text-sm sm:text-base text-muted-foreground px-4 leading-relaxed">
+              50TB+ of premium content from the world's top entrepreneurs, traders, and business minds. Everything you need to build wealth and success.
             </p>
           </div>
-          <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {categories.map(({
             icon: Icon,
             label
-          }) => <Card key={label} className="transition hover:shadow-elegant">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
-                  <span className="text-sm font-medium">{label}</span>
+          }) => <Card key={label} className="transition-all duration-200 hover:shadow-md active:scale-95">
+                <CardContent className="p-3 sm:p-4 flex items-center gap-2 sm:gap-3">
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" aria-hidden="true" />
+                  <span className="text-xs sm:text-sm font-medium leading-tight">{label}</span>
                 </CardContent>
               </Card>)}
           </div>
