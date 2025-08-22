@@ -15,6 +15,10 @@ const CRYPTOMUS_API_KEY = Deno.env.get('CRYPTOMUS_API_KEY');
 
 // Validate required environment variables
 function validateEnvironment() {
+  console.log('🔍 Checking environment variables...');
+  console.log('🔍 CRYPTOMUS_MERCHANT_ID:', CRYPTOMUS_MERCHANT_ID ? 'Present' : 'Missing');
+  console.log('🔍 CRYPTOMUS_API_KEY:', CRYPTOMUS_API_KEY ? 'Present' : 'Missing');
+  
   if (!CRYPTOMUS_MERCHANT_ID) {
     throw new Error('CRYPTOMUS_MERCHANT_ID environment variable is required');
   }
