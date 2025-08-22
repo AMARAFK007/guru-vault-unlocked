@@ -15,3 +15,6 @@ major_version = 15
 
 [functions.payment-webhook]
 verify_jwt = false
+
+[functions.create-cryptomus-invoice]
+verify_jwt = false
