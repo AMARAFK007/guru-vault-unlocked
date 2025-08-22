@@ -113,7 +113,6 @@ serve(async (req) => {
       url_callback: requestData.url_callback,
       is_payment_multiple: false,
       lifetime: 7200,
-      to_currency: requestData.currency,
       subtract: 100,
       accuracy: 'default',
       additional_data: requestData.additional_data || '',
