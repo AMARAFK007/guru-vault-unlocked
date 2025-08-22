@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle, Download, Mail, ArrowRight } from 'lucide-react'
+import { CheckCircle, Download, Mail, ArrowRight, ExternalLink } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 export default function Success() {
   const [searchParams] = useSearchParams()
   const [orderStatus, setOrderStatus] = useState<'loading' | 'success' | 'pending' | 'error'>('loading')
   const [orderData, setOrderData] = useState<any>(null)
+
+  const DOWNLOAD_URL = "https://drive.google.com/file/d/1CDjpMw15UiLq4cEnJiCFVSu7v3J9L_TM/view?usp=sharing"
 
   useEffect(() => {
     const checkPaymentStatus = async () => {
@@ -69,7 +71,7 @@ export default function Success() {
                 <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
                 <CardTitle className="text-green-700">Payment Successful!</CardTitle>
                 <CardDescription>
-                  Thank you for your purchase. Your order has been confirmed.
+                  Thank you for your purchase. Your course is ready for download.
                 </CardDescription>
               </>
             )}
@@ -102,7 +104,7 @@ export default function Success() {
               <div className="bg-gray-50 p-4 rounded-lg text-left">
                 <h4 className="font-semibold mb-2">Order Details</h4>
                 <div className="text-sm space-y-1">
-                  <div>Order ID: {orderData.id.slice(-8)}</div>
+                  <div>Email: {orderData.email}</div>
                   <div>Amount: ${orderData.amount}</div>
                   <div>Status: <span className="capitalize">{orderData.status}</span></div>
                   <div>Date: {new Date(orderData.created_at).toLocaleDateString()}</div>
@@ -115,21 +117,25 @@ export default function Success() {
                 <div className="bg-green-50 p-4 rounded-lg">
                   <div className="flex items-center gap-2 text-green-700 mb-2">
                     <Download className="w-4 h-4" />
-                    <span className="font-semibold">What's Next?</span>
+                    <span className="font-semibold">Your Course Bundle</span>
                   </div>
                   <div className="text-sm text-green-600 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-3 h-3" />
-                      <span>Check your email for access instructions</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Download className="w-3 h-3" />
-                      <span>Download links will be provided shortly</span>
-                    </div>
+                    <div>✅ Complete Course Bundle</div>
+                    <div>✅ Bonus Looksmaxxing eBook</div>
+                    <div>✅ Lifetime Access</div>
                   </div>
                 </div>
+
+                <Button 
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  onClick={() => window.open(DOWNLOAD_URL, '_blank')}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Your Course Now
+                  <ExternalLink className="w-4 h-4 ml-2" />
+                </Button>
                 
-                <Button className="w-full" asChild>
+                <Button variant="outline" className="w-full" asChild>
                   <Link to="/">
                     <ArrowRight className="w-4 h-4 mr-2" />
                     Back to Homepage

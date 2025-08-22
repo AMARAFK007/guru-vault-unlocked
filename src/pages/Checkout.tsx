@@ -137,7 +137,7 @@ export default function Checkout() {
             currency: 'USD',
             order_id: orderId,
             url_return: `${window.location.origin}/success?order_id=${orderData.id}`,
-            url_callback: `https://qmltjekfuciwtnnkvjfi.supabase.co/functions/v1/payment-webhook?provider=cryptomus`,
+            url_callback: `https://zsjsgxjihmampbcdkzmw.supabase.co/functions/v1/payment-webhook`,
             email: email,
             additional_data: JSON.stringify({ 
               platform: 'LearnforLess',
