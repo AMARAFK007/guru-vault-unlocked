@@ -32,30 +32,30 @@ async function generateMD5(data: string): Promise<string> {
   return hashHex;
 }
 
-// Generate signature for Cryptomus API according to their documentation
+// Generate signature for Cryptomus API - correct implementation
 // Formula: MD5(base64(JSON_data) + API_KEY)
 async function generateSignature(data: any): Promise<string> {
   try {
-    // Step 1: Sort object keys for consistent JSON serialization
-    const sortedKeys = Object.keys(data).sort();
-    const sortedData: any = {};
-    sortedKeys.forEach(key => {
-      sortedData[key] = data[key];
+    // Step 1: Create clean data object excluding empty values
+    const cleanData: any = {};
+    Object.keys(data).forEach(key => {
+      const value = data[key];
+      // Only include non-empty values
+      if (value !== null && value !== undefined && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+        cleanData[key] = value;
+      }
     });
     
-    // Step 2: Convert to JSON string
-    const jsonString = JSON.stringify(sortedData);
-    console.log('🔧 Sorted JSON data for signature:', jsonString);
+    // Step 2: Convert to JSON string without spaces
+    const jsonString = JSON.stringify(cleanData);
+    console.log('🔧 Clean JSON data for signature:', jsonString);
     
     // Step 3: Encode to base64
-    const encoder = new TextEncoder();
-    const utf8Bytes = encoder.encode(jsonString);
-    const base64Data = btoa(String.fromCharCode(...utf8Bytes));
+    const base64Data = btoa(jsonString);
     console.log('🔧 Base64 data:', base64Data.substring(0, 50) + '...');
     
     // Step 4: Combine base64 data with API key
     const signString = base64Data + CRYPTOMUS_API_KEY;
-    console.log('🔧 Sign string length:', signString.length);
     console.log('🔧 Sign string preview:', signString.substring(0, 100) + '...');
     
     // Step 5: Generate MD5 hash
@@ -104,7 +104,7 @@ serve(async (req) => {
 
     console.log('🔍 Parsed request data:', JSON.stringify(requestData, null, 2));
 
-    // Prepare Cryptomus API payload with exact structure as per documentation
+    // Prepare Cryptomus API payload - simplified structure
     const cryptomusPayload = {
       amount: requestData.amount,
       currency: requestData.currency,
@@ -117,8 +117,6 @@ serve(async (req) => {
       subtract: 100,
       accuracy: 'default',
       additional_data: requestData.additional_data || '',
-      currencies: [],
-      except_currencies: [],
       description: 'LearnforLess Course Bundle Payment'
     };
 
