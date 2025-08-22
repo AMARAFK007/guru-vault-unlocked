@@ -1,9 +1,5 @@
-import CryptoJS from 'crypto-js';
-
 // Cryptomus API integration
-const CRYPTOMUS_API_URL = 'https://api.cryptomus.com/v1'
-const CRYPTOMUS_MERCHANT_ID = '6260dd74-c31d-46d2-ab06-176ada669ccd'
-const CRYPTOMUS_API_KEY = 'ZopVnjS33vr16DWnvCLKAXzVnZhNCOXkEt4yN7TgQCxAOuCdumzPdJBJVWIhe2VH6jNdr0Tk0dIKBvKBHzt0kMhtXiYNkbObLNyNgBcprV6cQmFREXlVIvFEo8TH8RPO'
+// All credentials are now stored securely in Supabase Secrets
 
 export interface CryptomusInvoice {
   uuid: string
@@ -60,40 +56,5 @@ export async function createCryptomusInvoice(data: CreateInvoiceRequest): Promis
   }
 }
 
-// Generate signature for Cryptomus API according to their documentation
-// Formula: MD5(base64(JSON_data) + API_KEY)
-function generateSignature(data: any): string {
-  try {
-    // Step 1: Convert data to JSON string
-    const jsonString = JSON.stringify(data)
-    console.log('🔧 JSON data for signature:', jsonString)
-    
-    // Step 2: Encode to base64
-    const base64Data = btoa(jsonString)
-    console.log('🔧 Base64 data:', base64Data.substring(0, 50) + '...')
-    
-    // Step 3: Combine base64 data with API key
-    const signString = base64Data + CRYPTOMUS_API_KEY
-    console.log('🔧 Sign string length:', signString.length)
-    
-    // Step 4: Generate MD5 hash using crypto-js
-    const hash = CryptoJS.MD5(signString).toString()
-    console.log('🔧 Generated MD5 hash:', hash)
-    
-    return hash
-  } catch (error) {
-    console.error('❌ Signature generation error:', error)
-    throw error
-  }
-}
-
-// Verify webhook signature
-export function verifyCryptomusWebhook(signature: string, data: any): boolean {
-  try {
-    const expectedSignature = generateSignature(data)
-    return signature === expectedSignature
-  } catch (error) {
-    console.error('❌ Webhook signature verification error:', error)
-    return false
-  }
-}
+// Note: Signature generation and webhook verification are now handled in the edge function
+// where we have secure access to API keys through Supabase Secrets

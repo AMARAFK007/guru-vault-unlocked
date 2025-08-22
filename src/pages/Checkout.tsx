@@ -22,24 +22,7 @@ interface PaymentMethod {
 
 const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
 
-// Cryptomus configuration
-const CRYPTOMUS_MERCHANT_ID = "6260dd74-c31d-46d2-ab06-176ada669ccd";
-const CRYPTOMUS_BASE_URL = "https://pay.cryptomus.com/pay";
-
-// Generate fallback Cryptomus payment URL (if API fails)
-const generateFallbackCryptomusURL = (email: string, amount: number, orderId: string) => {
-  // Fallback URL in case API invoice creation fails
-  const params = new URLSearchParams({
-    merchant: CRYPTOMUS_MERCHANT_ID,
-    amount: amount.toString(),
-    currency: 'USD',
-    order_id: orderId,
-    email: email,
-    description: 'LearnforLess Course Bundle'
-  });
-  
-  return `${CRYPTOMUS_BASE_URL}?${params.toString()}`;
-};
+// Cryptomus configuration - credentials now handled securely in edge function
 
 // Payment methods - URLs will be generated at payment time
 const paymentMethods: PaymentMethod[] = [
@@ -172,9 +155,8 @@ export default function Checkout() {
             throw new Error('Invalid invoice response');
           }
         } catch (apiError) {
-          console.warn('Cryptomus API failed, using fallback URL:', apiError);
-          // Use fallback URL if API fails
-          paymentUrl = generateFallbackCryptomusURL(email, 12.99, orderId);
+          console.error('Cryptomus API failed:', apiError);
+          throw new Error('Failed to create Cryptomus invoice. Please try again or use Gumroad.');
         }
       }
 
