@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Lock, Shield, CreditCard, Bitcoin, ArrowLeft, CheckCircle, Star, Sparkles } from "lucide-react";
 import gumroadLogo from "@/assets/gumroad-logo.ico";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { createCryptomusInvoice } from "@/lib/cryptomus";
 
@@ -155,7 +155,17 @@ export default function Checkout() {
               .from('orders')
               .update({ 
                 payment_id: cryptomusInvoice.uuid,
-                metadata: { ...orderData.metadata, cryptomus_invoice: cryptomusInvoice }
+                metadata: { 
+                  ...((orderData.metadata as Record<string, any>) || {}), 
+                  cryptomus_invoice: {
+                    uuid: cryptomusInvoice.uuid,
+                    order_id: cryptomusInvoice.order_id,
+                    amount: cryptomusInvoice.amount,
+                    currency: cryptomusInvoice.currency,
+                    url: cryptomusInvoice.url,
+                    status: cryptomusInvoice.status
+                  }
+                }
               })
               .eq('id', orderData.id);
           } else {
