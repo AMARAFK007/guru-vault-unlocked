@@ -84,7 +84,7 @@ serve(async (req) => {
   }
 
   try {
-    console.log('📥 Create invoice request:', req.method);
+    console.log('📥 Create invoice request received:', req.method, new Date().toISOString());
     
     // Validate environment variables
     validateEnvironment();
