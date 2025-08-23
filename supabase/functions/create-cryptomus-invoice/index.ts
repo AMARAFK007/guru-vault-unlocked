@@ -15,16 +15,20 @@ const CRYPTOMUS_API_KEY = Deno.env.get('CRYPTOMUS_API_KEY');
 
 // Validate required environment variables
 function validateEnvironment() {
-  console.log('🔍 Checking environment variables...');
-  console.log('🔍 CRYPTOMUS_MERCHANT_ID:', CRYPTOMUS_MERCHANT_ID ? 'Present' : 'Missing');
-  console.log('🔍 CRYPTOMUS_API_KEY:', CRYPTOMUS_API_KEY ? 'Present' : 'Missing');
+  console.log('🔍 Environment variables validation:');
+  console.log('🔍 CRYPTOMUS_MERCHANT_ID:', CRYPTOMUS_MERCHANT_ID ? '✅ Present' : '❌ Missing');
+  console.log('🔍 CRYPTOMUS_API_KEY:', CRYPTOMUS_API_KEY ? '✅ Present' : '❌ Missing');
   
   if (!CRYPTOMUS_MERCHANT_ID) {
-    throw new Error('CRYPTOMUS_MERCHANT_ID environment variable is required');
+    console.error('❌ CRYPTOMUS_MERCHANT_ID is missing from environment variables');
+    throw new Error('CRYPTOMUS_MERCHANT_ID environment variable is required. Please check Supabase secrets configuration.');
   }
   if (!CRYPTOMUS_API_KEY) {
-    throw new Error('CRYPTOMUS_API_KEY environment variable is required');
+    console.error('❌ CRYPTOMUS_API_KEY is missing from environment variables');
+    throw new Error('CRYPTOMUS_API_KEY environment variable is required. Please check Supabase secrets configuration.');
   }
+  
+  console.log('✅ All environment variables are properly configured');
 }
 
 // Generate MD5 hash using Deno's built-in crypto
