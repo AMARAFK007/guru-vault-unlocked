@@ -10,8 +10,8 @@ const corsHeaders = {
 
 // Get credentials from environment variables (Supabase Secrets)
 const CRYPTOMUS_API_URL = 'https://api.cryptomus.com/v1';
-const CRYPTOMUS_MERCHANT_ID = Deno.env.get('CRYPTOMUS_MERCHANT_ID');
-const CRYPTOMUS_API_KEY = Deno.env.get('CRYPTOMUS_API_KEY');
+const CRYPTOMUS_MERCHANT_ID = Deno.env.get('CRYPTOMUS_MERCHANT_ID') || '6260dd74-c31d-46d2-ab06-176ada669ccd';
+const CRYPTOMUS_API_KEY = Deno.env.get('CRYPTOMUS_API_KEY') || '7QAbZ2GAggH5j3zejuZbkHnlzjLTktjkh6zYeeKPyzIv7moDGagKCnLGQC31ZMuE4rJcifjzVbFQlY6sXllmw4nY2kfCKzdi5SEPTAJwooslZx7rNSVcHk9rhvfDxPcS';
 
 // Validate required environment variables
 function validateEnvironment() {
