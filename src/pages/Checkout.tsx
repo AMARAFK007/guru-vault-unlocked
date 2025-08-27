@@ -128,7 +128,7 @@ export default function Checkout() {
             currency: 'USD',
             order_id: orderId,
             url_return: `${window.location.origin}/success?order_id=${orderData.id}`,
-            url_callback: `https://zsjsgxjihmampbcdkzmw.supabase.co/functions/v1/payment-webhook`,
+            url_callback: `https://zsjsgxjihmampbcdkzmw.supabase.co/functions/v1/payment-webhook?provider=cryptomus`,
             email: email,
             additional_data: JSON.stringify({ 
               platform: 'LearnforLess',
@@ -139,9 +139,7 @@ export default function Checkout() {
 
           if (cryptomusInvoice && cryptomusInvoice.url) {
             paymentUrl = cryptomusInvoice.url;
-            console.log('✅ Cryptomus invoice created:', cryptomusInvoice.uuid);
             
-            // Update order with payment ID
             await supabase
               .from('orders')
               .update({ 

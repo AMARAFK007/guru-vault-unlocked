@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Cryptomus Integration</title>
+</head>
+<body>
+    <h1>Cryptomus Integration Test</h1>
+    <button onclick="testCryptomus()">Test Cryptomus Invoice Creation</button>
+    <div id="result"></div>
+
+    <script>
+        async function testCryptomus() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const testData = {
+                    amount: '14.99',
+                    currency: 'USD',
+                    order_id: 'test_' + Date.now(),
+                    url_return: window.location.origin + '/success',
+                    url_callback: 'https://zsjsgxjihmampbcdkzmw.supabase.co/functions/v1/payment-webhook',
+                    email: 'test@example.com',
+                    additional_data: JSON.stringify({ 
+                        platform: 'LearnforLess',
+                        package: 'Complete Course Bundle Test'
+                    })
+                };
+
+                console.log('Testing with data:', testData);
+
+                const response = await fetch('https://zsjsgxjihmampbcdkzmw.supabase.co/functions/v1/create-cryptomus-invoice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                console.log('Response status:', response.status);
+                const responseText = await response.text();
+                console.log('Response body:', responseText);
+
+                if (response.ok) {
+                    const result = JSON.parse(responseText);
+                    if (result.success) {
+                        resultDiv.innerHTML = `
+                            <h3>✅ Success!</h3>
+                            <p><strong>Invoice UUID:</strong> ${result.invoice.uuid}</p>
+                            <p><strong>Payment URL:</strong> <a href="${result.invoice.url}" target="_blank">${result.invoice.url}</a></p>
+                            <p><strong>Amount:</strong> ${result.invoice.amount} ${result.invoice.currency}</p>
+                            <p><strong>Status:</strong> ${result.invoice.status}</p>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `<h3>❌ API Error:</h3><p>${result.error}</p>`;
+                    }
+                } else {
+                    resultDiv.innerHTML = `<h3>❌ HTTP Error:</h3><p>Status: ${response.status}</p><p>Response: ${responseText}</p>`;
+                }
+            } catch (error) {
+                console.error('Test error:', error);
+                resultDiv.innerHTML = `<h3>❌ Network Error:</h3><p>${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
