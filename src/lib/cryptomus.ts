@@ -22,57 +22,37 @@ export interface CreateInvoiceRequest {
 
 export async function createCryptomusInvoice(data: CreateInvoiceRequest): Promise<CryptomusInvoice | null> {
   try {
-    // Direct API call to Cryptomus
-    const payload = {
-      amount: data.amount,
-      currency: data.currency,
-      order_id: data.order_id,
-      url_return: data.url_return,
-      url_callback: data.url_callback,
-      is_payment_multiple: false,
-      lifetime: 7200,
-      subtract: 100,
-      accuracy: 'default',
-      additional_data: data.additional_data || '',
-      description: 'LearnforLess Course Bundle Payment'
-    };
-
-    // Generate signature
-    const jsonString = JSON.stringify(payload);
-    const base64Data = btoa(jsonString);
-    const signString = base64Data + '7QAbZ2GAggH5j3zejuZbkHnlzjLTktjkh6zYeeKPyzIv7moDGagKCnLGQC31ZMuE4rJcifjzVbFQlY6sXllmw4nY2kfCKzdi5SEPTAJwooslZx7rNSVcHk9rhvfDxPcS';
+    console.log('🚀 Creating Cryptomus invoice with data:', data)
     
-    // Generate MD5 hash
-    const encoder = new TextEncoder();
-    const data_encoded = encoder.encode(signString);
-    const hashBuffer = await crypto.subtle.digest('MD5', data_encoded);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-    const response = await fetch('https://api.cryptomus.com/v1/payment', {
+    // Call our edge function to create the invoice (avoids CORS issues)
+    const response = await fetch('https://zsjsgxjihmampbcdkzmw.supabase.co/functions/v1/create-cryptomus-invoice', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'merchant': '6260dd74-c31d-46d2-ab06-176ada669ccd',
-        'sign': signature,
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzanNneGppaG1hbXBiY2Rrem13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MzIyMjIsImV4cCI6MjA3MTQwODIyMn0.T3Hp0keiACOcfSdT6ZgzW00rFhcmcpDXcpsrY58EsJA'
       },
-      body: JSON.stringify(payload)
-    });
+      body: JSON.stringify(data)
+    })
 
-    const result = await response.json();
-    
-    if (result.state === 0 && result.result) {
-      return {
-        uuid: result.result.uuid,
-        order_id: result.result.order_id,
-        amount: result.result.amount,
-        currency: result.result.currency,
-        url: result.result.url,
-        status: result.result.status || 'pending'
-      };
+    console.log('📡 Edge function response status:', response.status)
+    const responseText = await response.text()
+    console.log('📡 Edge function response body:', responseText)
+
+    if (!response.ok) {
+      console.error(`Edge function HTTP error: ${response.status} - ${responseText}`)
+      return null
     }
+
+    const result = JSON.parse(responseText)
+    console.log('📦 Parsed edge function result:', result)
     
-    return null;
+    if (result.success && result.invoice) {
+      console.log('✅ Invoice created successfully:', result.invoice.uuid)
+      return result.invoice
+    } else {
+      console.error(`Edge function error: ${result.error || 'Unknown error'}`)
+      return null
+    }
   } catch (error) {
     console.error('❌ Error creating Cryptomus invoice:', error)
     return null
