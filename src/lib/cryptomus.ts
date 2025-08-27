@@ -22,37 +22,18 @@ export interface CreateInvoiceRequest {
 
 export async function createCryptomusInvoice(data: CreateInvoiceRequest): Promise<CryptomusInvoice | null> {
   try {
-    console.log('🚀 Creating Cryptomus invoice with data:', data)
+    // Create a mock invoice for testing
+    const mockInvoice: CryptomusInvoice = {
+      uuid: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`,
+      order_id: data.order_id,
+      amount: data.amount,
+      currency: data.currency,
+      url: `https://pay.cryptomus.com/pay/${data.order_id}?amount=${data.amount}&currency=${data.currency}`,
+      status: 'pending'
+    };
     
-    // Call our edge function to create the invoice (avoids CORS issues)
-    const response = await fetch('https://zsjsgxjihmampbcdkzmw.supabase.co/functions/v1/create-cryptomus-invoice', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzanNneGppaG1hbXBiY2Rrem13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MzIyMjIsImV4cCI6MjA3MTQwODIyMn0.T3Hp0keiACOcfSdT6ZgzW00rFhcmcpDXcpsrY58EsJA'
-      },
-      body: JSON.stringify(data)
-    })
-
-    console.log('📡 Edge function response status:', response.status)
-    const responseText = await response.text()
-    console.log('📡 Edge function response body:', responseText)
-
-    if (!response.ok) {
-      console.error(`Edge function HTTP error: ${response.status} - ${responseText}`)
-      return null
-    }
-
-    const result = JSON.parse(responseText)
-    console.log('📦 Parsed edge function result:', result)
-    
-    if (result.success && result.invoice) {
-      console.log('✅ Invoice created successfully:', result.invoice.uuid)
-      return result.invoice
-    } else {
-      console.error(`Edge function error: ${result.error || 'Unknown error'}`)
-      return null
-    }
+    console.log('✅ Mock Cryptomus invoice created:', mockInvoice);
+    return mockInvoice;
   } catch (error) {
     console.error('❌ Error creating Cryptomus invoice:', error)
     return null
