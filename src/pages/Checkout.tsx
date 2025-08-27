@@ -37,7 +37,7 @@ const paymentMethods: PaymentMethod[] = [
   {
     id: 'cryptomus',
     name: 'Cryptomus',
-    description: 'Cryptocurrency payments - $12.99 + FREE Looksmaxxing eBook',
+    description: 'Cryptocurrency payments - $14.99 + FREE Looksmaxxing eBook',
     icon: Bitcoin,
     url: '' // Will be generated dynamically
   }
@@ -94,7 +94,7 @@ export default function Checkout() {
           {
             email: email,
             payment_provider: method.id,
-            amount: method.id === 'gumroad' ? 14.99 : 12.99,
+            amount: method.id === 'gumroad' ? 14.99 : 14.99,
             status: 'pending',
             metadata: { order_id: orderId }
           }
@@ -116,7 +116,7 @@ export default function Checkout() {
         // Try to create invoice via API first
         try {
           const cryptomusInvoice = await createCryptomusInvoice({
-            amount: '12.99',
+            amount: '14.99',
             currency: 'USD',
             order_id: orderId,
             url_return: `${window.location.origin}/success?order_id=${orderData.id}`,
@@ -337,13 +337,13 @@ export default function Checkout() {
                                 </p>
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="text-white font-semibold text-sm sm:text-base">
-                                    {method.id === 'gumroad' ? '$14.99' : '$12.99'}
+                                    {method.id === 'gumroad' ? '$14.99' : '$14.99'}
                                   </span>
                                   {method.id === 'gumroad' && (
                                     <span className="text-white/40 text-xs">Standard price</span>
                                   )}
                                   {method.id === 'cryptomus' && (
-                                    <span className="text-emerald-400 text-xs sm:text-sm font-medium">Save $2.00</span>
+                                    <span className="text-emerald-400 text-xs sm:text-sm font-medium">Same price</span>
                                   )}
                                 </div>
                                 {method.id === 'cryptomus' && (
@@ -405,7 +405,7 @@ export default function Checkout() {
                     ) : (
                       <>
                         <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
-                        <span>Buy Now - {selectedMethod === 'gumroad' ? '$14.99' : '$12.99'}</span>
+                        <span>Buy Now - {selectedMethod === 'gumroad' ? '$14.99' : '$14.99'}</span>
                       </>
                     )}
                   </div>
