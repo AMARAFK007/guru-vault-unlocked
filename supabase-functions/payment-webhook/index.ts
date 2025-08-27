@@ -25,7 +25,7 @@ serve(async (req) => {
     const url = new URL(req.url)
     const provider = url.searchParams.get('provider') // 'gumroad' or 'cryptomus'
     
-    if (!provider || !['gumroad', 'cryptomus'].includes(provider)) {
+    if (!provider || !['gumroad', 'cryptomus', 'basepay'].includes(provider)) {
       return new Response(
         JSON.stringify({ error: 'Invalid provider' }),
         { 
@@ -67,6 +67,24 @@ serve(async (req) => {
       
       if (error) {
         console.error('Cryptomus webhook error:', error)
+        return new Response(
+          JSON.stringify({ error: error.message }),
+          { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+      
+      result = data
+    } else if (provider === 'basepay') {
+      // Handle BasePay webhook
+      const { data, error } = await supabaseClient.rpc('handle_basepay_webhook', {
+        webhook_payload: payload
+      })
+      
+      if (error) {
+        console.error('BasePay webhook error:', error)
         return new Response(
           JSON.stringify({ error: error.message }),
           { 
