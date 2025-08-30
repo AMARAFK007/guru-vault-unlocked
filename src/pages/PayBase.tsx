@@ -37,7 +37,7 @@ export default function PayBase() {
     // Update order status to indicate payment was initiated
     if (orderId) {
       try {
-        await supabase
+        const { error } = await supabase
           .from('orders')
           .update({ 
             status: 'payment_initiated',
@@ -46,7 +46,11 @@ export default function PayBase() {
               payment_method: 'base_manual'
             }
           })
-          .eq('metadata->base_payment->order_id', orderId);
+          .eq('id', orderId);
+          
+        if (error) {
+          console.error('Error updating order:', error);
+        }
       } catch (error) {
         console.error('Error updating order:', error);
       }
