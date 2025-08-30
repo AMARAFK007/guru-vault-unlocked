@@ -22,21 +22,30 @@ export interface CreateInvoiceRequest {
 
 export async function createCryptomusInvoice(data: CreateInvoiceRequest): Promise<CryptomusInvoice | null> {
   try {
-    // Create a mock invoice for testing
-    const mockInvoice: CryptomusInvoice = {
-      uuid: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`,
-      order_id: data.order_id,
-      amount: data.amount,
-      currency: data.currency,
-      url: `https://pay.cryptomus.com/pay/${data.order_id}?amount=${data.amount}&currency=${data.currency}`,
-      status: 'pending'
-    };
+    // Call the Supabase edge function
+    const response = await fetch(`https://zsjsgxjihmampbcdkzmw.supabase.co/functions/v1/create-cryptomus-invoice`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+    }
+
+    const result = await response.json();
     
-    console.log('✅ Mock Cryptomus invoice created:', mockInvoice);
-    return mockInvoice;
+    if (result.success && result.invoice) {
+      console.log('✅ Cryptomus invoice created:', result.invoice);
+      return result.invoice;
+    } else {
+      throw new Error(result.error || 'Failed to create invoice');
+    }
   } catch (error) {
-    console.error('❌ Error creating Cryptomus invoice:', error)
-    return null
+    console.error('❌ Error creating Cryptomus invoice:', error);
+    return null;
   }
 }
 

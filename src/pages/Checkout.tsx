@@ -10,10 +10,9 @@ import gumroadLogo from "@/assets/gumroad-logo.ico";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { createCryptomusInvoice } from "@/lib/cryptomus";
-import { createBasePayment } from "@/lib/basepay";
 
 interface PaymentMethod {
-  id: 'gumroad' | 'cryptomus' | 'basepay';
+  id: 'gumroad' | 'cryptomus';
   name: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -41,19 +40,12 @@ const paymentMethods: PaymentMethod[] = [
     description: 'Cryptocurrency payments - $14.99 + FREE Looksmaxxing eBook',
     icon: Bitcoin,
     url: '' // Will be generated dynamically
-  },
-  {
-    id: 'basepay',
-    name: 'BasePay',
-    description: 'Base blockchain payments - $14.99',
-    icon: Wallet,
-    url: '' // Will be generated dynamically
   }
 ];
 
 export default function Checkout() {
   const [email, setEmail] = useState("");
-  const [selectedMethod, setSelectedMethod] = useState<'gumroad' | 'cryptomus' | 'basepay'>('cryptomus');
+  const [selectedMethod, setSelectedMethod] = useState<'gumroad' | 'cryptomus'>('cryptomus');
   const [isProcessing, setIsProcessing] = useState(false);
   const { user, signInWithMagicLink } = useAuth();
 
@@ -79,7 +71,7 @@ export default function Checkout() {
     }
   }, []);
 
-  const handlePaymentSelect = async (methodId: 'gumroad' | 'cryptomus' | 'basepay') => {
+  const handlePaymentSelect = async (methodId: 'gumroad' | 'cryptomus') => {
     if (!email.trim()) {
       document.getElementById('email')?.focus();
       return;
@@ -163,55 +155,6 @@ export default function Checkout() {
         } catch (apiError) {
           console.error('Cryptomus API failed:', apiError);
           throw new Error('Failed to create Cryptomus invoice. Please try again or use Gumroad.');
-        }
-      } else if (method.id === 'basepay') {
-        console.log('Setting up BasePay payment...');
-        
-        // Create direct Base network payment
-        try {
-          const basePayment = await createBasePayment({
-            amount: '14.99',
-            currency: 'USD',
-            order_id: orderId,
-            return_url: `${window.location.origin}/success?order_id=${orderData.id}`,
-            email: email,
-            metadata: JSON.stringify({ 
-              platform: 'LearnforLess',
-              package: 'Complete Course Bundle',
-              order_db_id: orderData.id
-            })
-          });
-
-          if (basePayment && basePayment.payment_url) {
-            paymentUrl = basePayment.payment_url;
-            console.log('✅ Base payment created:', basePayment.id);
-            
-            // Update order with payment details
-            await supabase
-              .from('orders')
-              .update({ 
-                payment_id: basePayment.id,
-                metadata: { 
-                  ...((orderData.metadata as Record<string, any>) || {}), 
-                  base_payment: {
-                    id: basePayment.id,
-                    order_id: basePayment.order_id,
-                    amount: basePayment.amount,
-                    currency: basePayment.currency,
-                    recipient_address: basePayment.recipient_address,
-                    network: basePayment.network,
-                    payment_url: basePayment.payment_url,
-                    status: basePayment.status
-                  }
-                }
-              })
-              .eq('id', orderData.id);
-          } else {
-            throw new Error('Invalid Base payment response');
-          }
-        } catch (apiError) {
-          console.error('Base payment setup failed:', apiError);
-          throw new Error('Failed to setup Base payment. Please try again or use another payment method.');
         }
       }
 
@@ -367,17 +310,13 @@ export default function Checkout() {
                                   className="w-5 h-5 sm:w-6 sm:h-6 object-contain filter brightness-0 invert"
                                 />
                               ) : (
-                                <method.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${
-                                  method.id === 'cryptomus' ? 'text-orange-400' : 
-                                  method.id === 'basepay' ? 'text-blue-400' : 'text-white'
-                                }`} />
+                                 <method.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${
+                                   method.id === 'cryptomus' ? 'text-orange-400' : 'text-white'
+                                 }`} />
                               )}
-                              {method.id === 'cryptomus' && (
-                                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-yellow-500/10" />
-                              )}
-                              {method.id === 'basepay' && (
-                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10" />
-                              )}
+                               {method.id === 'cryptomus' && (
+                                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-yellow-500/10" />
+                               )}
                             </div>
                             
                             {/* Method details */}
@@ -393,11 +332,10 @@ export default function Checkout() {
                                 )}
                               </div>
                               <div className="space-y-1">
-                                <p className="text-white/60 text-xs sm:text-sm">
-                                  {method.id === 'gumroad' ? 'Credit/debit cards, PayPal, and more' : 
-                                   method.id === 'cryptomus' ? 'Cryptocurrency payments' : 
-                                   'Base blockchain payments'}
-                                </p>
+                                 <p className="text-white/60 text-xs sm:text-sm">
+                                   {method.id === 'gumroad' ? 'Credit/debit cards, PayPal, and more' : 
+                                    'Cryptocurrency payments'}
+                                 </p>
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="text-white font-semibold text-sm sm:text-base">
                                     $14.99
@@ -405,12 +343,9 @@ export default function Checkout() {
                                   {method.id === 'gumroad' && (
                                     <span className="text-white/40 text-xs">Standard price</span>
                                   )}
-                                  {method.id === 'cryptomus' && (
-                                    <span className="text-emerald-400 text-xs sm:text-sm font-medium">+ FREE eBook</span>
-                                  )}
-                                  {method.id === 'basepay' && (
-                                    <span className="text-blue-400 text-xs sm:text-sm font-medium">Base network</span>
-                                  )}
+                                    {method.id === 'cryptomus' && (
+                                      <span className="text-emerald-400 text-xs sm:text-sm font-medium">+ FREE eBook</span>
+                                    )}
                                 </div>
                                 {method.id === 'cryptomus' && (
                                   <div className="flex items-start gap-2 mt-2">
