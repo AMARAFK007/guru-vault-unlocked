@@ -10,46 +10,79 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
       orders: {
         Row: {
           amount: number
-          created_at: string
-          currency: string
+          created_at: string | null
+          currency: string | null
           email: string
           id: string
           metadata: Json | null
           payment_id: string | null
           payment_provider: string
-          status: string
-          updated_at: string
+          status: string | null
+          updated_at: string | null
         }
         Insert: {
           amount: number
-          created_at?: string
-          currency?: string
+          created_at?: string | null
+          currency?: string | null
           email: string
           id?: string
           metadata?: Json | null
           payment_id?: string | null
           payment_provider: string
-          status?: string
-          updated_at?: string
+          status?: string | null
+          updated_at?: string | null
         }
         Update: {
           amount?: number
-          created_at?: string
-          currency?: string
+          created_at?: string | null
+          currency?: string | null
           email?: string
           id?: string
           metadata?: Json | null
           payment_id?: string | null
           payment_provider?: string
-          status?: string
-          updated_at?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      webhook_logs: {
+        Row: {
+          created_at: string | null
+          error: string | null
+          event_type: string | null
+          id: string
+          payload: Json | null
+          processed: boolean | null
+          provider: string
+          signature: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error?: string | null
+          event_type?: string | null
+          id?: string
+          payload?: Json | null
+          processed?: boolean | null
+          provider: string
+          signature?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error?: string | null
+          event_type?: string | null
+          id?: string
+          payload?: Json | null
+          processed?: boolean | null
+          provider?: string
+          signature?: string | null
         }
         Relationships: []
       }
