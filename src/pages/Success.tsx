@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, Download, Mail, ArrowRight, ExternalLink } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
 
 export default function Success() {
   const [searchParams] = useSearchParams()
@@ -15,35 +15,57 @@ export default function Success() {
   useEffect(() => {
     const checkPaymentStatus = async () => {
       try {
-        // Get order ID or payment ID from URL params
+        // Get order ID from URL params
         const orderId = searchParams.get('order_id')
         const paymentId = searchParams.get('payment_id')
         
-        if (orderId || paymentId) {
-          // Check order status in database
-          let query = supabase.from('orders').select('*')
-          
-          if (orderId) {
-            query = query.eq('id', orderId)
-          } else if (paymentId) {
-            query = query.eq('payment_id', paymentId)
-          }
-          
-          const { data, error } = await query.single()
-          
-          if (error) {
-            console.error('Error fetching order:', error)
-            setOrderStatus('error')
-          } else if (data) {
-            setOrderData(data)
-            setOrderStatus(data.status === 'completed' ? 'success' : 'pending')
-          } else {
-            setOrderStatus('error')
-          }
-        } else {
-          // No order info in URL, show generic success
-          setOrderStatus('success')
+        // SECURITY: Must have order_id or payment_id to proceed
+        if (!orderId && !paymentId) {
+          console.error('No order ID provided')
+          setOrderStatus('error')
+          return
         }
+        
+        // Check order status in database
+        let query = supabase.from('orders').select('*')
+        
+        if (orderId) {
+          query = query.eq('id', orderId)
+        } else if (paymentId) {
+          query = query.eq('payment_id', paymentId)
+        }
+        
+        const { data, error } = await query.single()
+        
+        if (error) {
+          console.error('Error fetching order:', error)
+          setOrderStatus('error')
+          return
+        }
+        
+        if (!data) {
+          console.error('Order not found')
+          setOrderStatus('error')
+          return
+        }
+        
+        // SECURITY: Verify payment_id exists (means Cryptomus invoice was created)
+        if (!data.payment_id) {
+          console.error('No payment ID found - invalid order')
+          setOrderStatus('error')
+          return
+        }
+        
+        // SECURITY: Only grant access if status is "completed"
+        setOrderData(data)
+        if (data.status === 'completed') {
+          setOrderStatus('success')
+        } else if (data.status === 'pending' || data.status === 'processing') {
+          setOrderStatus('pending')
+        } else {
+          setOrderStatus('error')
+        }
+        
       } catch (error) {
         console.error('Error checking payment status:', error)
         setOrderStatus('error')

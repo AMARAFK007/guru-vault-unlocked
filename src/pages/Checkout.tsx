@@ -6,35 +6,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Lock, Shield, CreditCard, Bitcoin, ArrowLeft, CheckCircle, Star, Sparkles, Wallet } from "lucide-react";
-import gumroadLogo from "@/assets/gumroad-logo.ico";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { createCryptomusInvoice } from "@/lib/cryptomus";
+import { toast } from "sonner";
 
 interface PaymentMethod {
-  id: 'gumroad';
+  id: 'cryptomus';
   name: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
-  url: string;
   logo?: string;
 }
 
-const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
-
 const paymentMethods: PaymentMethod[] = [
   {
-    id: 'gumroad',
-    name: 'Gumroad',
-    description: 'Credit/debit cards, PayPal, and more - $14.99',
-    icon: CreditCard,
-    url: GUMROAD_URL,
-    logo: gumroadLogo
+    id: 'cryptomus',
+    name: 'Cryptomus',
+    description: 'Pay with crypto (USDT, BTC, ETH, and more) - $14.99',
+    icon: Bitcoin,
   }
 ];
 
 export default function Checkout() {
   const [email, setEmail] = useState("");
-  const [selectedMethod, setSelectedMethod] = useState<'gumroad'>('gumroad');
+  const [selectedMethod, setSelectedMethod] = useState<'cryptomus'>('cryptomus');
   const [isProcessing, setIsProcessing] = useState(false);
   const { user, signInWithMagicLink } = useAuth();
 
@@ -60,7 +56,7 @@ export default function Checkout() {
     }
   }, []);
 
-  const handlePaymentSelect = async (methodId: 'gumroad') => {
+  const handlePaymentSelect = async (methodId: 'cryptomus') => {
     if (!email.trim()) {
       document.getElementById('email')?.focus();
       return;
@@ -83,7 +79,8 @@ export default function Checkout() {
           {
             email: email,
             payment_provider: method.id,
-            amount: 14.99, // All methods now cost the same
+            amount: 14.99,
+            currency: 'USD',
             status: 'pending',
             metadata: { order_id: orderId }
           }
@@ -93,27 +90,48 @@ export default function Checkout() {
 
       if (orderError) {
         console.error('Error creating order:', orderError);
+        toast.error('Failed to create order. Please try again.');
         throw new Error('Failed to create order');
       }
 
       console.log('Order created:', orderData);
-      const paymentUrl = method.url;
 
-      if (!paymentUrl) {
-        throw new Error('Could not generate payment URL');
-      }
-
-      console.log('Opening payment URL:', paymentUrl);
+      // Create Cryptomus invoice
+      toast.loading('Creating payment invoice...');
       
-      // Open payment page
+      const invoice = await createCryptomusInvoice({
+        amount: '14.99',
+        currency: 'USD',
+        order_id: orderId,
+        url_return: `${window.location.origin}/success?order_id=${orderData.id}`,
+      });
+
+      console.log('Cryptomus invoice created:', invoice);
+
+      // Update order with payment ID
+      await supabase
+        .from('orders')
+        .update({ 
+          payment_id: invoice.result.uuid,
+          metadata: { 
+            order_id: orderId,
+            invoice_url: invoice.result.url,
+            payment_address: invoice.result.address,
+            network: invoice.result.network
+          }
+        })
+        .eq('id', orderData.id);
+
+      toast.success('Payment invoice created!');
+      
+      // Redirect to Cryptomus payment page
       setTimeout(() => {
-        window.open(paymentUrl, '_blank', 'noopener,noreferrer');
-        setIsProcessing(false);
+        window.location.href = invoice.result.url;
       }, 500);
       
     } catch (error) {
       console.error('❌ Payment processing error:', error);
-      alert('Failed to process payment. Please try again.');
+      toast.error('Failed to process payment. Please try again.');
       setIsProcessing(false);
     }
   };
@@ -243,16 +261,8 @@ export default function Checkout() {
                         <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-white/10 backdrop-blur-sm relative z-10">
                           <div className="flex items-center gap-3 sm:gap-4">
                             {/* Payment method icon/logo */}
-                            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-white/10 relative overflow-hidden">
-                              {method.id === 'gumroad' && method.logo ? (
-                                <img 
-                                  src={method.logo} 
-                                  alt="Gumroad" 
-                                  className="w-5 h-5 sm:w-6 sm:h-6 object-contain filter brightness-0 invert"
-                                />
-                              ) : (
-                                 <method.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                              )}
+                            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-orange-500/20 to-yellow-500/20 flex items-center justify-center border border-white/10 relative overflow-hidden">
+                              <method.icon className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" />
                             </div>
                             
                             {/* Method details */}
