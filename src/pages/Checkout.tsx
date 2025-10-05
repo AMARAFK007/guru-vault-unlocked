@@ -9,10 +9,9 @@ import { Lock, Shield, CreditCard, Bitcoin, ArrowLeft, CheckCircle, Star, Sparkl
 import gumroadLogo from "@/assets/gumroad-logo.ico";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { createCryptomusInvoice } from "@/lib/cryptomus";
 
 interface PaymentMethod {
-  id: 'gumroad' | 'cryptomus';
+  id: 'gumroad';
   name: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -22,9 +21,6 @@ interface PaymentMethod {
 
 const GUMROAD_URL = "https://learnforless.gumroad.com/l/dzhwd";
 
-// Cryptomus configuration - credentials now handled securely in edge function
-
-// Payment methods - URLs will be generated at payment time
 const paymentMethods: PaymentMethod[] = [
   {
     id: 'gumroad',
@@ -33,19 +29,12 @@ const paymentMethods: PaymentMethod[] = [
     icon: CreditCard,
     url: GUMROAD_URL,
     logo: gumroadLogo
-  },
-  {
-    id: 'cryptomus',
-    name: 'Cryptomus',
-    description: 'Cryptocurrency payments - $14.99 + FREE Looksmaxxing eBook',
-    icon: Bitcoin,
-    url: '' // Will be generated dynamically
   }
 ];
 
 export default function Checkout() {
   const [email, setEmail] = useState("");
-  const [selectedMethod, setSelectedMethod] = useState<'gumroad' | 'cryptomus'>('cryptomus');
+  const [selectedMethod, setSelectedMethod] = useState<'gumroad'>('gumroad');
   const [isProcessing, setIsProcessing] = useState(false);
   const { user, signInWithMagicLink } = useAuth();
 
@@ -71,7 +60,7 @@ export default function Checkout() {
     }
   }, []);
 
-  const handlePaymentSelect = async (methodId: 'gumroad' | 'cryptomus') => {
+  const handlePaymentSelect = async (methodId: 'gumroad') => {
     if (!email.trim()) {
       document.getElementById('email')?.focus();
       return;
@@ -108,55 +97,7 @@ export default function Checkout() {
       }
 
       console.log('Order created:', orderData);
-      let paymentUrl = method.url;
-      
-      if (method.id === 'cryptomus') {
-        console.log('Setting up Cryptomus payment...');
-        
-        // Try to create invoice via API first
-        try {
-          const cryptomusInvoice = await createCryptomusInvoice({
-            amount: '14.99',
-            currency: 'USD',
-            order_id: orderId,
-            url_return: `${window.location.origin}/success?order_id=${orderData.id}`,
-            url_callback: `https://zsjsgxjihmampbcdkzmw.supabase.co/functions/v1/payment-webhook?provider=cryptomus`,
-            email: email,
-            additional_data: JSON.stringify({ 
-              platform: 'LearnforLess',
-              package: 'Complete Course Bundle',
-              order_db_id: orderData.id
-            })
-          });
-
-          if (cryptomusInvoice && cryptomusInvoice.url) {
-            paymentUrl = cryptomusInvoice.url;
-            
-            await supabase
-              .from('orders')
-              .update({ 
-                payment_id: cryptomusInvoice.uuid,
-                metadata: { 
-                  ...((orderData.metadata as Record<string, any>) || {}), 
-                  cryptomus_invoice: {
-                    uuid: cryptomusInvoice.uuid,
-                    order_id: cryptomusInvoice.order_id,
-                    amount: cryptomusInvoice.amount,
-                    currency: cryptomusInvoice.currency,
-                    url: cryptomusInvoice.url,
-                    status: cryptomusInvoice.status
-                  }
-                }
-              })
-              .eq('id', orderData.id);
-          } else {
-            throw new Error('Invalid invoice response');
-          }
-        } catch (apiError) {
-          console.error('Cryptomus API failed:', apiError);
-          throw new Error('Failed to create Cryptomus invoice. Please try again or use Gumroad.');
-        }
-      }
+      const paymentUrl = method.url;
 
       if (!paymentUrl) {
         throw new Error('Could not generate payment URL');
@@ -310,13 +251,8 @@ export default function Checkout() {
                                   className="w-5 h-5 sm:w-6 sm:h-6 object-contain filter brightness-0 invert"
                                 />
                               ) : (
-                                 <method.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${
-                                   method.id === 'cryptomus' ? 'text-orange-400' : 'text-white'
-                                 }`} />
+                                 <method.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                               )}
-                               {method.id === 'cryptomus' && (
-                                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-yellow-500/10" />
-                               )}
                             </div>
                             
                             {/* Method details */}
@@ -325,36 +261,16 @@ export default function Checkout() {
                                 <h3 className="text-white font-semibold text-base sm:text-lg">
                                   {method.name}
                                 </h3>
-                                {method.id === 'cryptomus' && (
-                                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs">
-                                    BEST DEAL
-                                  </Badge>
-                                )}
                               </div>
                               <div className="space-y-1">
                                  <p className="text-white/60 text-xs sm:text-sm">
-                                   {method.id === 'gumroad' ? 'Credit/debit cards, PayPal, and more' : 
-                                    'Cryptocurrency payments'}
+                                   {method.description}
                                  </p>
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="text-white font-semibold text-sm sm:text-base">
                                     $14.99
                                   </span>
-                                  {method.id === 'gumroad' && (
-                                    <span className="text-white/40 text-xs">Standard price</span>
-                                  )}
-                                    {method.id === 'cryptomus' && (
-                                      <span className="text-emerald-400 text-xs sm:text-sm font-medium">+ FREE eBook</span>
-                                    )}
                                 </div>
-                                {method.id === 'cryptomus' && (
-                                  <div className="flex items-start gap-2 mt-2">
-                                    <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-yellow-400 text-xs sm:text-sm font-medium leading-tight">
-                                      FREE Looksmaxxing eBook (Worth $47)
-                                    </span>
-                                  </div>
-                                )}
                               </div>
                             </div>
                             
