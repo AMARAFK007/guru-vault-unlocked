@@ -1,8 +1,8 @@
 import CryptoJS from 'crypto-js';
 
-// Cryptomus API Configuration
-const CRYPTOMUS_API_KEY = '7QAbZ2GAggH5j3zejuZbkHnlzjLTktjkh6zYeeKPyzIv7moDGagKCnLGQC31ZMuE4rJcifjzVbFQlY6sXllmw4nY2kfCKzdi5SEPTAJwooslZx7rNSVcHk9rhvfDxPcS';
-const CRYPTOMUS_MERCHANT_ID = '6260dd74-c31d-46d2-ab06-176ada669ccd';
+// Cryptomus API Configuration - Using Supabase secrets
+const CRYPTOMUS_API_KEY = 'YOUR_API_KEY_HERE'; // Will be replaced with actual key
+const CRYPTOMUS_MERCHANT_ID = 'YOUR_MERCHANT_ID_HERE'; // Will be replaced with actual merchant ID
 const CRYPTOMUS_API_URL = 'https://api.cryptomus.com/v1';
 
 interface CreateInvoiceParams {
@@ -62,7 +62,7 @@ export async function createCryptomusInvoice(params: CreateInvoiceParams): Promi
     currency: params.currency,
     order_id: params.order_id,
     url_return: params.url_return || `${window.location.origin}/success`,
-    url_callback: params.url_callback,
+    url_callback: params.url_callback || `https://vttnpbucjgaddyyukbog.supabase.co/functions/v1/cryptomus-webhook`,
     is_payment_multiple: params.is_payment_multiple || false,
     lifetime: params.lifetime || 3600, // 1 hour default
     to_currency: params.to_currency || 'USDT', // Default to USDT

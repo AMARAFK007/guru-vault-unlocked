@@ -1,1 +1,4 @@
 project_id = "vttnpbucjgaddyyukbog"
+
+[functions.cryptomus-webhook]
+verify_jwt = false
