@@ -1,8 +1,8 @@
 import CryptoJS from 'crypto-js';
 
-// Cryptomus API Configuration - Using Supabase secrets
-const CRYPTOMUS_API_KEY = 'YOUR_API_KEY_HERE'; // Will be replaced with actual key
-const CRYPTOMUS_MERCHANT_ID = 'YOUR_MERCHANT_ID_HERE'; // Will be replaced with actual merchant ID
+// Cryptomus API Configuration
+const CRYPTOMUS_API_KEY = 'yXd5fd8K7SP5C4bEdYN7cfj7JSReE6le1s46RSiHgbJzVBtkBPU5NyWIJrg3FgRICiBmPO3wQc87gYblZWUIvekOw0Z75tvl9k5dVf8InSOzlgCwsPNB23gPd5jbJBd4';
+const CRYPTOMUS_MERCHANT_ID = '6260dd74-c31d-46d2-ab06-176ada669ccd';
 const CRYPTOMUS_API_URL = 'https://api.cryptomus.com/v1';
 
 interface CreateInvoiceParams {
