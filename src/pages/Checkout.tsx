@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Lock, Shield, CreditCard, Bitcoin, ArrowLeft, CheckCircle, Star, Sparkles, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { createCryptomusInvoice } from "@/lib/cryptomus";
+
 import { toast } from "sonner";
 
 interface PaymentMethod {
@@ -96,15 +96,23 @@ export default function Checkout() {
 
       console.log('Order created:', orderData);
 
-      // Create Cryptomus invoice
+      // Create Cryptomus invoice via edge function
       toast.loading('Creating payment invoice...');
       
-      const invoice = await createCryptomusInvoice({
-        amount: '14.99',
-        currency: 'USD',
-        order_id: orderId,
-        url_return: `${window.location.origin}/success?order_id=${orderData.id}`,
+      const { data: invoice, error: invoiceError } = await supabase.functions.invoke('create-cryptomus-invoice', {
+        body: {
+          amount: '14.99',
+          currency: 'USD',
+          order_id: orderId,
+          url_return: `${window.location.origin}/success?order_id=${orderData.id}`,
+        }
       });
+
+      if (invoiceError || !invoice) {
+        console.error('Error creating invoice:', invoiceError);
+        toast.error('Failed to create payment invoice');
+        throw new Error('Failed to create invoice');
+      }
 
       console.log('Cryptomus invoice created:', invoice);
 
