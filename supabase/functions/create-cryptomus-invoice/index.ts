@@ -40,10 +40,11 @@ serve(async (req) => {
 
     console.log('Creating invoice with data:', invoiceData)
 
-    // Generate signature
+    // Generate signature: MD5 of base64(JSON) + API_KEY (per Cryptomus docs)
     const dataString = JSON.stringify(invoiceData)
-    const encodedData = new TextEncoder().encode(dataString + CRYPTOMUS_API_KEY)
-    const hashBuffer = await createHash('md5').update(encodedData).digest()
+    const base64Data = btoa(dataString)
+    const encodedSigInput = new TextEncoder().encode(base64Data + CRYPTOMUS_API_KEY)
+    const hashBuffer = await createHash('md5').update(encodedSigInput).digest()
     const signature = Array.from(new Uint8Array(hashBuffer))
       .map(b => b.toString(16).padStart(2, '0'))
       .join('')
