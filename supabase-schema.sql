@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id),
   email TEXT NOT NULL,
-  payment_provider TEXT NOT NULL CHECK (payment_provider IN ('gumroad', 'cryptomus')),
+  payment_provider TEXT NOT NULL CHECK (payment_provider IN ('gumroad')),
   payment_id TEXT,
   amount DECIMAL(10,2) NOT NULL,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'failed', 'refunded')),

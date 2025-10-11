@@ -49,7 +49,7 @@ export default function Success() {
           return
         }
         
-        // SECURITY: Verify payment_id exists (means Cryptomus invoice was created)
+        // SECURITY: Verify payment_id exists
         if (!data.payment_id) {
           console.error('No payment ID found - invalid order')
           setOrderStatus('error')

@@ -5,36 +5,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Lock, Shield, CreditCard, Bitcoin, ArrowLeft, CheckCircle, Star, Sparkles, Wallet } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { Lock, Shield, ArrowLeft, CheckCircle, Star, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-
-import { toast } from "sonner";
-
-interface PaymentMethod {
-  id: 'cryptomus';
-  name: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  logo?: string;
-}
-
-const paymentMethods: PaymentMethod[] = [
-  {
-    id: 'cryptomus',
-    name: 'Cryptomus',
-    description: 'Pay with crypto (USDT, BTC, ETH, and more) - $14.99',
-    icon: Bitcoin,
-  }
-];
 
 export default function Checkout() {
   const [email, setEmail] = useState("");
-  const [selectedMethod, setSelectedMethod] = useState<'cryptomus'>('cryptomus');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const { user, signInWithMagicLink } = useAuth();
-
-  // Removed test function to avoid import issues
+  const { user } = useAuth();
 
   // Simple mobile-optimized effect
   useEffect(() => {
@@ -55,94 +31,6 @@ export default function Checkout() {
       return () => window.removeEventListener('mousemove', handleMouseMove);
     }
   }, []);
-
-  const handlePaymentSelect = async (methodId: 'cryptomus') => {
-    if (!email.trim()) {
-      document.getElementById('email')?.focus();
-      return;
-    }
-
-    setIsProcessing(true);
-    
-    try {
-      const method = paymentMethods.find(m => m.id === methodId);
-      
-      if (!method) {
-        throw new Error('Payment method not found');
-      }
-
-      // Create order record in Supabase
-      const orderId = `order-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const { data: orderData, error: orderError } = await supabase
-        .from('orders')
-        .insert([
-          {
-            email: email,
-            payment_provider: method.id,
-            amount: 14.99,
-            currency: 'USD',
-            status: 'pending',
-            metadata: { order_id: orderId }
-          }
-        ])
-        .select()
-        .single();
-
-      if (orderError) {
-        console.error('Error creating order:', orderError);
-        toast.error('Failed to create order. Please try again.');
-        throw new Error('Failed to create order');
-      }
-
-      console.log('Order created:', orderData);
-
-      // Create Cryptomus invoice via edge function
-      toast.loading('Creating payment invoice...');
-      
-      const { data: invoice, error: invoiceError } = await supabase.functions.invoke('create-cryptomus-invoice', {
-        body: {
-          amount: '14.99',
-          currency: 'USD',
-          order_id: orderId,
-          url_return: `${window.location.origin}/success?order_id=${orderData.id}`,
-        }
-      });
-
-      if (invoiceError || !invoice) {
-        console.error('Error creating invoice:', invoiceError);
-        toast.error('Failed to create payment invoice');
-        throw new Error('Failed to create invoice');
-      }
-
-      console.log('Cryptomus invoice created:', invoice);
-
-      // Update order with payment ID
-      await supabase
-        .from('orders')
-        .update({ 
-          payment_id: invoice.result.uuid,
-          metadata: { 
-            order_id: orderId,
-            invoice_url: invoice.result.url,
-            payment_address: invoice.result.address,
-            network: invoice.result.network
-          }
-        })
-        .eq('id', orderData.id);
-
-      toast.success('Payment invoice created!');
-      
-      // Redirect to Cryptomus payment page
-      setTimeout(() => {
-        window.location.href = invoice.result.url;
-      }, 500);
-      
-    } catch (error) {
-      console.error('❌ Payment processing error:', error);
-      toast.error('Failed to process payment. Please try again.');
-      setIsProcessing(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
@@ -224,6 +112,17 @@ export default function Checkout() {
             <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-white/8 via-transparent to-white/4 pointer-events-none" />
             
             <CardContent className="p-4 sm:p-6 md:p-8 relative z-10">
+              {/* Payment Not Configured Notice */}
+              <div className="flex items-start gap-3 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl mb-6">
+                <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-white font-semibold mb-1">Payment Gateway Not Configured</h3>
+                  <p className="text-white/70 text-sm">
+                    Please configure a payment provider to enable checkout functionality.
+                  </p>
+                </div>
+              </div>
+
               <form className="space-y-6">
                 {/* Email Field */}
                 <div className="space-y-2">
@@ -237,112 +136,22 @@ export default function Checkout() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="h-12 sm:h-14 bg-white/5 border-white/20 text-white placeholder:text-white/40 backdrop-blur-sm focus:bg-white/10 focus:border-blue-400/50 transition-all duration-200 text-base"
-                    required
+                    disabled
                   />
-                  {!email.trim() && (
-                    <p className="text-white/60 text-xs sm:text-sm mt-1">
-                      Enter your email to continue with checkout
-                    </p>
-                  )}
-                </div>
-
-                {/* Payment Methods */}
-                <div className="space-y-3">
-                  <Label className="text-white font-medium text-sm">
-                    Choose Payment Method
-                  </Label>
-                  
-                  <div className="grid gap-3">
-                    {paymentMethods.map((method) => (
-                      <div
-                        key={method.id}
-                        className={`relative cursor-pointer transition-all duration-200 rounded-xl sm:rounded-2xl active:scale-[0.98] ${
-                          selectedMethod === method.id
-                            ? 'ring-2 ring-blue-400/50 bg-white/10 shadow-xl shadow-blue-500/20'
-                            : 'bg-white/5 hover:bg-white/8 active:bg-white/10'
-                        }`}
-                        onClick={() => setSelectedMethod(method.id)}
-                      >
-                        {selectedMethod === method.id && (
-                          <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500/8 via-transparent to-purple-500/8 pointer-events-none" />
-                        )}
-                        <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-white/10 backdrop-blur-sm relative z-10">
-                          <div className="flex items-center gap-3 sm:gap-4">
-                            {/* Payment method icon/logo */}
-                            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-orange-500/20 to-yellow-500/20 flex items-center justify-center border border-white/10 relative overflow-hidden">
-                              <method.icon className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" />
-                            </div>
-                            
-                            {/* Method details */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start sm:items-center gap-2 mb-1 flex-wrap">
-                                <h3 className="text-white font-semibold text-base sm:text-lg">
-                                  {method.name}
-                                </h3>
-                              </div>
-                              <div className="space-y-1">
-                                 <p className="text-white/60 text-xs sm:text-sm">
-                                   {method.description}
-                                 </p>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="text-white font-semibold text-sm sm:text-base">
-                                    $14.99
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            {/* Selection indicator */}
-                            <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 transition-all duration-200 flex-shrink-0 ${
-                              selectedMethod === method.id
-                                ? 'border-blue-400 bg-blue-400'
-                                : 'border-white/30'
-                            }`}>
-                              {selectedMethod === method.id && (
-                                <CheckCircle className="w-full h-full text-black" />
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <p className="text-white/60 text-xs sm:text-sm mt-1">
+                    Configure payment provider to enable checkout
+                  </p>
                 </div>
 
                 {/* Purchase Button */}
                 <Button
                   type="button"
-                  onClick={() => {
-                    if (email.trim()) {
-                      handlePaymentSelect(selectedMethod);
-                    } else {
-                      // Focus on email field if empty
-                      document.getElementById('email')?.focus();
-                    }
-                  }}
-                  disabled={!email.trim() || isProcessing}
-                  className="w-full h-14 sm:h-16 text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 hover:from-blue-600 hover:via-purple-600 hover:to-emerald-600 text-white border-0 rounded-xl sm:rounded-2xl shadow-xl transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 group relative overflow-hidden touch-manipulation"
+                  disabled
+                  className="w-full h-14 sm:h-16 text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 text-white border-0 rounded-xl sm:rounded-2xl shadow-xl opacity-50 cursor-not-allowed"
                 >
-                  {/* Simplified glow for mobile */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-emerald-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl sm:rounded-2xl" />
-                  
                   <div className="relative flex items-center justify-center gap-2 sm:gap-3">
-                    {isProcessing ? (
-                      <>
-                        <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Processing...</span>
-                      </>
-                    ) : !email.trim() ? (
-                      <>
-                        <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
-                        <span>Enter Email to Continue</span>
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
-                        <span>Buy Now - $14.99</span>
-                      </>
-                    )}
+                    <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <span>Payment Not Available</span>
                   </div>
                 </Button>
 
@@ -372,8 +181,6 @@ export default function Checkout() {
           </Card>
         </div>
       </main>
-
-
     </div>
   );
 }

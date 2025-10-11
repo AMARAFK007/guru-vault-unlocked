@@ -18,7 +18,7 @@ export interface Order {
   id: string
   user_id: string
   email: string
-  payment_provider: 'gumroad' | 'cryptomus'
+  payment_provider: 'gumroad'
   payment_id: string
   amount: number
   status: 'pending' | 'completed' | 'failed'
